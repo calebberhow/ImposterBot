@@ -6,4 +6,4 @@ require('./util/eventLoader')(client);
 require('./util/commandLoader')(client);
 
 // Log in
-client.login(process.env.TOKEN);
+client.login();
