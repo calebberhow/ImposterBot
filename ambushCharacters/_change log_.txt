@@ -1,0 +1,31 @@
+--== Plans / Requests ==--
+
+Mimic
+Archer -> Barrage (10 * amount of allies alive)
+
+..--== Changes (latest on top) ==--..
+Sneak Attack - 40-10 > 50-10
+Silver Bullet - 50-25 > 40-20
+Terrorize Damage - 20% > 20% + 5
+Phantom - Health 100 > 90
+Sneak Attack - 25 or 5
+Werewolf Ability Added [Solid Defense]
+Werewolf Ability Removed [Strong Jaw]
+Terrorize Damage - 50% > 20%
+Terrorize Recoil - 25 > 10
+
+//-organized line-
+Fireball - 50% > 30%
+Solid Defense - 0.2 > 0.25
+Solid Defense - 30% > 20
+Spellcast - 50% > 30%
+Terrorize - Recoil 20 > 25
+Werewolf - 100 > 120
+Strong Jaw - 40-50 >  30-50
+Solid Defense - 20% > 20
+Bulletproof - 30% > 20
+Werewolf - Removed Spellcast as weakness
+Bulletproof adds 0.05 defense each time it attacks with bulletproof
+Dark Magic - 30-50 > 20-30
+Vital Strike - 100% accuracy > 80%
+Solid Defense - 80% > 100%

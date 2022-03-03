@@ -1,0 +1,30 @@
+{
+  "name": "ImposterBot",
+  "version": "1.0.0",
+  "description": "Yo!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Cressy",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/opus": "^0.4.0",
+    "@replit/database": "^2.0.0",
+    "colors.js": "^1.2.4",
+    "console-read-write": "^0.1.1",
+    "discord-anti-spam": "^2.5.0",
+    "discord.js": "^12.5.1",
+    "express": "^4.17.1",
+    "ffmpeg": "0.0.4",
+    "ffmpeg-static": "^4.2.7",
+    "fluent-ffmpeg": "^2.1.2",
+    "minestat": "^1.0.3",
+    "require-all": "^3.0.0",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0",
+    "ws": "^7.3.1",
+    "ytdl-core": "^4.5.0"
+  }
+}

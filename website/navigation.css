@@ -1,0 +1,69 @@
+nav {
+    margin: -8px;
+    padding-bottom: 20px;
+    top: 0;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqOcpBEY9J_gS-99jsTW8-D060PVRsur-TjXDAA0j8PUBrumCvYoQdNB7xva9TaXDG0p7jvwoiZ4IC1GzXRA:https://scx2.b-cdn.net/gfx/news/hires/2019/galaxy.jpg&usqp=CAU");
+    border-bottom: 3px solid gray;
+}
+
+nav h1 {
+    text-align: center;
+    color: cornflowerblue;
+    font-size: 35px;
+}
+
+nav ul {
+    margin: -1px;
+    text-decoration: none;
+}
+
+nav li {
+    display: inline;
+    padding: 6px;
+    background-color: white;
+    border: 3px solid black;
+    transition: background-color 1s, color 1s, border 0.5s;
+}
+
+nav li:hover{
+    color: white;
+    border: 3px solid darkgray;
+    background-color:navy;
+}
+
+nav a {
+    color: black;
+    text-decoration: none;
+}
+
+.current {
+    background-color: cornflowerblue;
+}
+
+nav h1 {
+    font-family: 'Courier New', Courier, monospace;
+    animation-name: ColorPalette;
+	animation-duration: 30s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear; 
+    animation-direction: alternate;
+}
+
+
+@keyframes ColorPalette {
+	0% {
+		color: cornflowerblue;
+	}
+    33% {
+        color:blueviolet;
+    }
+	66% {
+		color: navy;
+	}
+	100% {
+		color: cornflowerblue;
+	}
+}
