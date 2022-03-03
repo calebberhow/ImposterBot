@@ -7,7 +7,7 @@ If the message is not a command, it is moderated and appropriately responded to.
 */
 
 const Discord = require('discord.js');
-const ids = require('../ids.json');
+const ids = require('../ids_manager');
 const lib = require('../util/lib.js');
 const ghost = require('../util/ghost.js')()
 const AntiSpam = require('discord-anti-spam');
@@ -60,7 +60,7 @@ function command_handler(client, message) {
     */
     var [cmd, ...args] = message.content.trim().slice(ids.prefix.length).split(/\s+/g);
     const command = client.commands.get(cmd.toLowerCase()) || client.commands.get(client.aliases.get(cmd.toLowerCase()));
-    if (message.guild && message.content.startsWith(ids.prefix) && command && message.guild.id === ids.cozycosmos) {
+    if (message.content.startsWith(ids.prefix) && command) {
         if (!communicationsState['operational'] && !command.config.essential) return message.channel.send("Communications are offline!\nUnscramble `" + communicationsState['scramble'] + "` to fix them.")
         else {
             command.run(client, message, args);

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ids = require('../ids');
+const ids = require('../ids_manager');
 const lib = require('../util/lib.js');
 
 module.exports = (client, oldMessage, newMessage) => {

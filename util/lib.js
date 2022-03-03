@@ -1,4 +1,4 @@
-ids = require('../ids.json');
+ids = require('../ids_manager');
 
 const spamSettings = {
     warnThreshold: 4, muteThreshold: 6, kickThreshold: 15, banThreshold: 20,
