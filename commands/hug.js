@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const fs = require('fs');
+const ids = require('../ids_manager');
 const dir = './assets/hug';
 const lib = require('../util/lib.js');
 const colors = require('../util/colors.js');
@@ -10,7 +11,7 @@ module.exports.run = async (client, message, args) => {
       mention = message.mentions.users.first();
       if(typeof mention ==='undefined') {
         let usernames = [];
-        const guild = client.guilds.cache.get("760284692669923339");        
+        const guild = client.guilds.cache.get(ids.serverID);        
         guild.members.cache.forEach(member => {
             if (member.user.username.toLowerCase().includes(args[0].toLowerCase())) {
               usernames.push(member.user.username);

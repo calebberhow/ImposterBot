@@ -1,4 +1,4 @@
-const ids = require('../ids');
+const ids = require('../ids_manager');
 
 module.exports = (client, member) => {
   if (member.guild.id !== ids.cozycosmos) return;

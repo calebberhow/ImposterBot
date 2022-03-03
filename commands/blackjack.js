@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ids = require('../ids.json');
+const ids = require('../ids_manager');
 const colors = require('../util/colors.js');
 
 // determine valid cards.

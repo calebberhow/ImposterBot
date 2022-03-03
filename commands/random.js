@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ids = require('../ids.json');
+const ids = require('../ids_manager');
 const colors = require('../util/colors.js')
 module.exports.run = async (client, message, args) => {
     if (message.channel.id != ids.oxygen) return message.channel.send("This command can only be used in <#" + ids.oxygen + ">!")

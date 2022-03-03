@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const ids = require('../ids.json')
+const ids = require('../ids_manager')
 module.exports.run = async (client, message, args) => {
   message.channel.send(
   `**Function**
