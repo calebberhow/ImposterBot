@@ -7,4 +7,4 @@ require('./util/eventLoader')(client);
 require('./util/commandLoader')(client);
 
 // Log in
-client.login();
+client.login(process.env.CLIENT_TOKEN);
