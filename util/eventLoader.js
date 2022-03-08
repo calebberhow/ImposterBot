@@ -4,7 +4,7 @@ module.exports = (client) => {
 
     const files = requireAll({
         dirname: path.join(__dirname,'../events'),
-        filter: /^(?!-)(.+)\.js$/
+        filter: /^(?!-)(.+)(?<!.test)\.js$/
     });
 
     client.removeAllListeners();

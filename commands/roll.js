@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const colors = require('../util/colors.js');
+
 module.exports.run = async (client, message, args) => {
     if (args[0] == null) args[0] = "20"
     let split = args[0].split('d');

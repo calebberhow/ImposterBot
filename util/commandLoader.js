@@ -4,7 +4,7 @@ module.exports = (client) => {
 
     const files = requireAll({
         dirname: path.join(__dirname, '../commands'),
-        filter: /^(?!-).+\.js$/
+        filter: /^(?!-)(.+)(?<!.test)\.js$/
     });
     const skipped = requireAll({
         dirname: path.join(__dirname, '../commands'),

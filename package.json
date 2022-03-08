@@ -4,7 +4,7 @@
   "description": "Yo!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Cressy",
@@ -21,6 +21,7 @@
     "ffmpeg": "0.0.4",
     "ffmpeg-static": "^4.2.7",
     "fluent-ffmpeg": "^2.1.2",
+    "jest": "^27.5.1",
     "minestat": "^1.0.3",
     "require-all": "^3.0.0",
     "sequelize": "^6.3.5",

@@ -263,3 +263,7 @@ function respond_to_message(message, client) {
             break;
     }
 }
+
+// Export functions for unit tests
+module.exports.scramble = scramble
+module.exports.lettersToNum = lettersToNum
