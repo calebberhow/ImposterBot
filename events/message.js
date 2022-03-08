@@ -114,30 +114,27 @@ function reactor_event(client, message) {
     /* Handles the creation of the reactor event in the ★reactor★ channel. */
     reactor = client.channels.cache.get(ids.reactor)
     reactor.updateOverwrite(message.guild.id, { SEND_MESSAGES: true });
-    reactor.send(
-        {
-            message: 'Reactor repairs needed! There are 2 minutes on the clock. Type `fix` or `repair`',
-            files: [{
-                attachment: `./assets/reactor.png`,
-                name: `reactor.png`
-            }]
-        })
-        .then(async () => {
-            await reactor.awaitMessages(m => (["repair", "fix"].includes(m.content.toLowerCase())), { max: 1, time: 120000 })
-                .then(async (crew) => {
-                    reactor.send("> <@" + crew.first().author.id + "> is fixing the reactor!\n*Awaiting Second User...*")
-                    await reactor.awaitMessages(e => (["repair", "fix"].includes(e.content.toLowerCase()) && e.author.id != crew.first().author.id), { max: 1, time: 120000 })
-                        .then(mate => {
-                            reactor.send("<@" + crew.first().author.id + "> and <@" + mate.first().author.id + "> have repaired the reactor!")
-                            reactor.setName("★reactor★")
-                        })
-                })
-                .catch(() => {
-                    reactor.send("*The reactor melts down...*\n> `Channel Locked Due to Radioactivity`")
-                    reactor.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
-                    reactor.setName("✩reactor✩")
-                });
-        })
+    reactor.send({
+        message: 'Reactor repairs needed! There are 2 minutes on the clock. Type `fix` or `repair`',
+        files: [{attachment: `./assets/reactor.png`,
+                 name: `reactor.png`
+    }]})
+    .then(async () => {
+        await reactor.awaitMessages(m => (["repair", "fix"].includes(m.content.toLowerCase())), { max: 1, time: 120000 })
+            .then(async (crew) => {
+                reactor.send("> <@" + crew.first().author.id + "> is fixing the reactor!\n*Awaiting Second User...*")
+                await reactor.awaitMessages(e => (["repair", "fix"].includes(e.content.toLowerCase()) && e.author.id != crew.first().author.id), { max: 1, time: 120000 })
+                    .then(mate => {
+                        reactor.send("<@" + crew.first().author.id + "> and <@" + mate.first().author.id + "> have repaired the reactor!")
+                        reactor.setName("★reactor★")
+                    })
+            })
+            .catch(() => {
+                reactor.send("*The reactor melts down...*\n> `Channel Locked Due to Radioactivity`")
+                reactor.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
+                reactor.setName("✩reactor✩")
+            });
+    });
 }
 
 function oxygen_event(client, message) {
@@ -149,16 +146,16 @@ function oxygen_event(client, message) {
     }
     oxygen.updateOverwrite(message.guild.id, { SEND_MESSAGES: true });
     oxygen.send("⚠️ **OXYGEN DEPLETION** [40s] ⚠️\nEmergency Code: `" + code.join("") + "`")
-        .then(async () => {
-            await oxygen.awaitMessages(m => (lettersToNum(m.content.toLowerCase()) == code.join("")), { max: 1, time: 40000 })
-                .then(collected => {
-                    oxygen.send("<@" + collected.first().author.id + "> has repaired the Oxygen!");
-                    oxygen.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
-                }).catch(err => {
-                    oxygen.send("> *Your vision goes black...*");
-                    oxygen.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
-                });
-        });
+    .then(async () => {
+        await oxygen.awaitMessages(m => (lettersToNum(m.content.toLowerCase()) == code.join("")), { max: 1, time: 40000 })
+            .then(collected => {
+                oxygen.send("<@" + collected.first().author.id + "> has repaired the Oxygen!");
+                oxygen.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
+            }).catch(err => {
+                oxygen.send("> *Your vision goes black...*");
+                oxygen.updateOverwrite(message.guild.id, { SEND_MESSAGES: false });
+            });
+    });
 }
 
 function lettersToNum(phrase) {
@@ -178,20 +175,19 @@ function communication_event(message, word = null) {
             "bean", "rayrayraisin", "dragon", "valcoria", "rikoniko", "spacey", "astley", "404pagenotfound", "tacocat", "chaos"]);
     }
     const word_scramble = scramble(word);
-
     communicationsState = {"operational": false,"scramble": word_scramble};
 
     message.channel.send("Communications have been sabotaged!\nUnscramble `" + word_scramble + "` to fix them.")
-        .then(async () => {
-            await message.channel.awaitMessages(m => m.content.trim().toLowerCase() == word, { max: 1, time: 240000 })
-                .then(collected => {
-                    message.channel.send("<@" + collected.first().author.id + "> has repaired communications!");
-                    communicationsState = {"operational": true,"scramble": null};
-                }).catch(() => {
-                    message.channel.send("Nobody repaired communications. We'll pretend that you did >.>");
-                    communicationsState = {"operational": true,"scramble": null};
-                });
-        });
+    .then(async () => {
+        await message.channel.awaitMessages(m => m.content.trim().toLowerCase() == word, { max: 1, time: 240000 })
+            .then(collected => {
+                message.channel.send("<@" + collected.first().author.id + "> has repaired communications!");
+                communicationsState = {"operational": true,"scramble": null};
+            }).catch(() => {
+                message.channel.send("Nobody repaired communications. We'll pretend that you did >.>");
+                communicationsState = {"operational": true,"scramble": null};
+            });
+    });
 }
 
 function scramble(word) {

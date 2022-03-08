@@ -4,9 +4,12 @@ const lettersToNum = require('./message.js').lettersToNum
 
 test("scramble()", ()=>{
     word = 'hello'
-    scrambled_word = scramble(word)
-    expect(scrambled_word.length == word.length).toBe(true)
-    expect(scrambled_word == word).toBe(false)
+    // Needs many tests to ensure all random edge cases are covered
+    for (let i = 0; i < 500; i++) {
+        scrambled_word = scramble(word)
+        expect(scrambled_word.length == word.length).toBe(true)
+        expect(scrambled_word == word).toBe(false)
+    }
 });
 
 test("lettersToNum()", () =>{

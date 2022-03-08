@@ -18,7 +18,7 @@ const spamSettings = {
     deleteMessagesAfterBanForPastDays: 1,
 }
 
-function randMessage(messagelist, weightlist = 'undefined') {
+function randMessage(messagelist, weightlist = 'undefined', test=false) {
     if (weightlist === 'undefined') { // Pure random:
         return messagelist[Math.floor(Math.random() * messagelist.length)];
     }
@@ -38,8 +38,8 @@ function randMessage(messagelist, weightlist = 'undefined') {
         }
     }
     else {
-        console.log('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.') //pure random
-        return messagelist[Math.floor(Math.random() * messagelist.length)];
+        if (!test) console.error('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.') //pure random
+        return null
     }
 
 }
@@ -58,26 +58,38 @@ function isModerator(member) {
 }
 
 
-function moderate(message) {
+function moderate(message, test=false) {
     /*
     Deletes and warns users for offensive slurs. Sends info about user and message to managerChannel.
     */
-    managerChannel = message.guild.channels.cache.get(ids.managerChannelID);
+    var managerChannel;
+    if (!test) managerChannel = message.guild.channels.cache.get(ids.managerChannelID);
     // list of offensive words in regex form
-    var reglist = [/\bfag+s+?\b/i, /\bdyke+s?\b/i, /\bf.*ggot+s?.*\bb/i, /\bkys+\b/i, /\bkill yourself+\b/i, /\bretard+(s+)?\b/i, /\bretarded+\b/i, /\bn.gger+s?\b/i, /\bn.gga+s?\b/i, /\bwhore+s?\b/i, /\btranny+\b/i];
+    var reglist = [/\bfag+s*?\b/i, /\bdyke+s?\b/i, /\bf.*ggot+s?.*\bb/i, /\bkys+\b/i, /\bkill.* yourself+.*\b/i, /\bretard+(s+)?.*\b/i, /\bretarded+.*\b/i, /\bn.gger+s.*?\b/i, /\bn.gga+s.*?\b/i, /\bwhore+s?\b/i, /\btranny+\b/i];
     var i;
     for (i = 0; i < reglist.length; i++) {
         if (message.content.match(reglist[i])) {
-            matched = i + 1;
-            message.delete();
-            message.member.roles.add(ids.mutedRoleID);
-            message.reply("Your message has been deleted. Please check your DMs.");
-            message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
-            managerChannel.send(`<@&${ids.managerRoleID}>`);
-            managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
-            break;
+            if (!test) {
+                matched(i, message);
+                return true
+            }
+            else {
+                return true
+            }
         }
     }
+    return false
 }
+
+function matched(i, message) {
+    matched = i + 1;
+    message.delete();
+    message.member.roles.add(ids.mutedRoleID);
+    message.reply("Your message has been deleted. Please check your DMs.");
+    message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
+    managerChannel.send(`<@&${ids.managerRoleID}>`);
+    managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
+}
+
 
 module.exports = { moderate, spamSettings, randMessage, isModerator }
