@@ -1,6 +1,9 @@
 module.exports = () => new ghost()
 
 function ghost() {
+    /*
+    Write explanation here, pls.
+    */
     this.favoriteChannel = ["779456953310642228", "776611595173494804", "812481897343090718", "812504533556527114"][Math.floor(Math.random() * 4)]
 
     this.process = (message) => {

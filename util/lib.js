@@ -1,6 +1,7 @@
 ids = require('../ids_manager');
 
 const spamSettings = {
+    /* Settings that are used for the discord AntiSpam module in message.js ../events/message.js */
     warnThreshold: 4, muteThreshold: 6, kickThreshold: 15, banThreshold: 20,
     maxDuplicatesWarning: 3, maxDuplicatesMute: 5, maxDuplicatesKick: 7, maxDuplicatesBan: 12,
     maxInterval: 3000, maxDuplicatesInterval: 4000,
@@ -19,6 +20,9 @@ const spamSettings = {
 }
 
 function randMessage(messagelist, weightlist = 'undefined', test=false) {
+    /*
+    Picks a string randomly out of a list of strings. Returns that string. Allows for weights to be applied, such that some strings can be picked more often than others. 
+    */
     if (weightlist === 'undefined') { // Pure random:
         return messagelist[Math.floor(Math.random() * messagelist.length)];
     }
@@ -40,11 +44,11 @@ function randMessage(messagelist, weightlist = 'undefined', test=false) {
     else throw new Error('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.');
 }
 
-/*
-Check if the input member class object has role "Moderator".
-Example: lib.isModerator(message.member)
-*/
 function isModerator(member) {
+    /*
+    Check if the input member class object has role "Moderator".
+    Example: lib.isModerator(message.member)
+    */
     if (member.roles.cache.find(r => r.name === "Moderator")) {
         return true
     }
@@ -55,18 +59,21 @@ function isModerator(member) {
 
 
 function moderate(message, test=false) {
-    /*
-    Deletes and warns users for offensive slurs. Sends info about user and message to managerChannel.
-    */
+    /* Deletes message and warns users for offensive slurs. Sends info about user and message to managerChannel. */
     var managerChannel;
     if (!test) managerChannel = message.guild.channels.cache.get(ids.managerChannelID);
-    // list of offensive words in regex form
     var reglist = [/\bfag+s*?\b/i, /\bdyke+s?\b/i, /\bf.*ggot+s?.*\bb/i, /\bkys+\b/i, /\bkill.* yourself+.*\b/i, /\bretard+(s+)?.*\b/i, /\bretarded+.*\b/i, /\bn.gger+s.*?\b/i, /\bn.gga+s.*?\b/i, /\bwhore+s?\b/i, /\btranny+\b/i];
     var i;
     for (i = 0; i < reglist.length; i++) {
         if (message.content.match(reglist[i])) {
             if (!test) {
-                matched(i, message);
+                matched = i + 1;
+                message.delete();
+                message.member.roles.add(ids.mutedRoleID);
+                message.reply("Your message has been deleted. Please check your DMs.");
+                message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
+                managerChannel.send(`<@&${ids.managerRoleID}>`);
+                managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
                 return true
             }
             else {
@@ -75,16 +82,6 @@ function moderate(message, test=false) {
         }
     }
     return false
-}
-
-function matched(i, message) {
-    matched = i + 1;
-    message.delete();
-    message.member.roles.add(ids.mutedRoleID);
-    message.reply("Your message has been deleted. Please check your DMs.");
-    message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
-    managerChannel.send(`<@&${ids.managerRoleID}>`);
-    managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
 }
 
 
