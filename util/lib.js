@@ -37,11 +37,7 @@ function randMessage(messagelist, weightlist = 'undefined', test=false) {
             }
         }
     }
-    else {
-        if (!test) console.error('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.') //pure random
-        return null
-    }
-
+    else throw new Error('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.');
 }
 
 /*

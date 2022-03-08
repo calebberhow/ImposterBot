@@ -192,18 +192,21 @@ function communication_event(message, word = null) {
 
 function scramble(word) {
     /* Creates a unique scramble for communication events. */
-    words = word.split(" ");
-    for (var word in words) {
-        split = words[word].split("");
-        for (var i = 0; i < split.length; i++) {
-            let random = Math.floor(Math.random() * split.length)
-            let temp = split[i]
-            split[i] = split[random]
-            split[random] = temp
+    const words = word.split(" ");
+    let scrambled = '';
+    for (var i in words) {
+        let split_word = words[i].split("");
+        for (var j = 0; i < split_word.length; i++) {
+            let random = Math.floor(Math.random() * split_word.length)
+            let temp = split_word[j]
+            split_word[j] = split_word[random]
+            split_word[random] = temp
         }
-        words[word] = split.join("")
+        scrambled += split_word.join("") + " "
     }
-    return words.join(" ")
+    scrambled = scrambled.trim()
+    if (scrambled == word) return scramble(word)
+    return scrambled
 }
 
 function respond_to_message(message, client) {

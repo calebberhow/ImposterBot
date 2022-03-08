@@ -9,7 +9,7 @@ test("randMessage()", () => {
         expect(list.includes(lib.randMessage(list))).toBe(true);
         expect(lib.randMessage(list, weights_1)).toBe('fruit');
         expect(['fruit','vegetable'].includes(lib.randMessage(list, weights_2))).toBe(true);
-        expect(lib.randMessage(list, weights_3, true)).toBe(null)
+        expect(() => lib.randMessage(list, weights_3, true)).toThrow(Error)
     }
 });
 
