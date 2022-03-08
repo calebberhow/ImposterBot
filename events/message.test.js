@@ -7,7 +7,7 @@ test("scramble()", ()=>{
     // Needs many tests to ensure all random edge cases are covered
     for (let i = 0; i < 500; i++) {
         scrambled_word = scramble(phrase)
-        expect(scrambled_word.length).toBe(word.length)
+        expect(scrambled_word.length).toBe(phrase.length)
         expect(scrambled_word).not.toBe(phrase)
     }
 });
