@@ -19,29 +19,28 @@ const spamSettings = {
     deleteMessagesAfterBanForPastDays: 1,
 }
 
-function randMessage(messagelist, weightlist = 'undefined', test=false) {
+function randMessage(messagelist, test=false) {
     /*
     Picks a string randomly out of a list of strings. Returns that string. Allows for weights to be applied, such that some strings can be picked more often than others. 
     */
-    if (weightlist === 'undefined') { // Pure random:
-        return messagelist[Math.floor(Math.random() * messagelist.length)];
-    }
-    else if (messagelist.length === weightlist.length) { // Weighted random:
-        sum = 0;
-        weightlist.forEach(weight => { sum += weight });
-        rand = Math.random()
-        condlist = new Array(weightlist.length + 1);
-        condlist[0] = 0
-        for (i = 0; i < weightlist.length; i++) {
-            condlist[i + 1] = condlist[i] + weightlist[i] / sum
-        }
-        for (i = condlist.length; i >= 0; i--) {
-            if (rand > condlist[i]) {
-                return messagelist[i]
-            }
+    for(const [index, message] of messagelist.entries()) {
+        if (!(typeof(message) === 'object')) { // checks if message does not have a weight attached
+            messagelist[index] = [message, 1]; // attach a base weight of 1.
         }
     }
-    else throw new Error('Messagelist (' + messagelist.length + ') and weightlist (' + weightlist.length + ') have different lengths.');
+    sum = 0
+    messagelist.forEach(message => { sum += message[1] });
+    rand = Math.random()
+    condlist = new Array(messagelist.length + 1);
+    condlist[0] = 0
+    for (i = 0; i < messagelist.length; i++) {
+        condlist[i + 1] = condlist[i] + messagelist[i][1] / sum
+    }
+    for (i = condlist.length; i >= 0; i--) {
+        if (rand > condlist[i]) {
+            return messagelist[i][0]
+        }
+    }
 }
 
 function isModerator(member) {

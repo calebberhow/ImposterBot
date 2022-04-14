@@ -104,8 +104,8 @@ module.exports.run = async (client, message, args) => {
   }
 
   function checkWin() {
-    let winner; let win = false;
     // Check for winner
+    let winner; let win = false;
     if(p1.isDead && p2.isDead && p3.isDead) { // opponent wins
       win = true;
       winner = opponent.username;
@@ -147,7 +147,6 @@ module.exports.run = async (client, message, args) => {
       );
     }
   }
-  
 
   // Sends empty embed, saves as editMsg for later editing
   await message.channel.send(new Discord.MessageEmbed()).then(embd => {
