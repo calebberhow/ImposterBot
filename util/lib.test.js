@@ -1,15 +1,13 @@
 const lib = require('./lib.js')
 
 test("randMessage()", () => {
-    list = ['apple','banana','fruit','vegetable'];
+    list_1 = [['apple',0],['banana',0],'fruit',['vegetable',0]];
+    list_2 = [['apple',0],['banana',0],'fruit','vegetable'];
     weights_1 = [0, 0, 1, 0];
     weights_2 = [0, 0, 0.5, 0.5];
-    weights_3 = [1]
     for (let i = 0; i < 50; i++) {
-        expect(list.includes(lib.randMessage(list))).toBe(true);
-        expect(lib.randMessage(list, weights_1)).toBe('fruit');
-        expect(['fruit','vegetable'].includes(lib.randMessage(list, weights_2))).toBe(true);
-        expect(() => lib.randMessage(list, weights_3, true)).toThrow(Error)
+        expect(lib.randMessage(list_1)).toBe('fruit');
+        expect(['fruit','vegetable'].includes(lib.randMessage(list_2))).toBe(true);
     }
 });
 

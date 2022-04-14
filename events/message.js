@@ -28,14 +28,12 @@ module.exports = (client, message) => {
     if (!isCommand) {
         lib.moderate(message);
         audit(message);
-        event_handler(client, message, counter)
+        event_handler(client, message, counter);
         respond_to_message(message, client);
 
         // React to @ mentions <-- If this gets more complex, extract to a global function
         if (message.mentions.has(client.user)) {
-            let rand = lib.randMessage(["I'm not the imposter.", "...?", "Red sus.", "*ImposterBot was ejected.*", "*ImposterBot has voted. 5 votes remaining.*",
-                "I'm just a crewmate, what about you?", "I finished all my tasks.", "Lock the doors.", "*votes you for random accusations*",
-                "What?", "If you saw me vent, that's because I am the engineer."]);
+            let rand = lib.randMessage(["I'm not the imposter.", "...?", "Red sus.", "*ImposterBot was ejected.*", "*ImposterBot has voted. 5 votes remaining.*", "I'm just a crewmate, what about you?", "I finished all my tasks.", "Lock the doors.", "*votes you for random accusations*","What?", "If you saw me vent, that's because I am the engineer."]);
             message.channel.send(rand);
         }
 
@@ -86,13 +84,11 @@ function audit(message) {
 function event_handler(client, message, counter) {
     /* Processes random events that rely on the message counter. Sends random messages and causes random events. Resets the counter when done. */
     if (--counter == 0) {
-        counter = Math.floor(Math.random() * 15) + 60;
+        counter = Math.floor(Math.random() * 15) + 15;
 
         let randAnswer = lib.randMessage(
-            ["that's sus", "*Blue has called an emergency meeting.*", "I'm going to do a med bay scan.", "The body was in electrical.", "This is a self-report.", "*Vent Noises*", "--[REACTOR]--", "--[OXYGEN]--", "--[COMMUNICATIONS]--", "Who wants to do tasks in electrical?", "Self-care is important. (And self-reporting.)", "An **ERROR** has occured... jk unless..", "type !d bump if you want to see more people join :)", "Please insert `5` coins.", "I blame J.", "So..how's the weather?"],
-            [1, 1, 1, 1, 1, 1, 1.5, 1.5, 3, 1, 1, 0.5, 0.25, 0.5, 1, 1]
+            [["that's sus",1], ["*Blue has called an emergency meeting.*",1], ["I'm going to do a med bay scan.",1], ["The body was in electrical.",1], ["This is a self-report.",1], ["*Vent Noises*",1], ["--[REACTOR]--",3], ["--[OXYGEN]--",3], ["--[COMMUNICATIONS]--",5], ["Who wants to do tasks in electrical?",1], ["Self-care is important. (And self-reporting.)",1], ["An **ERROR** has occured... jk unless..",0.5], ["type !d bump if you want to see more people join :)",1], ["Please insert `5` coins.",1], ["I blame J.",1], ["So..how's the weather?",1]],
         );
-
         if (randAnswer in ["--[REACTOR]--", "--[OXYGEN]--", "--[COMMUNICATIONS]--"]) {
             switch (randAnswer) {
                 case "--[REACTOR]--":
@@ -170,14 +166,12 @@ function communication_event(message, word = null) {
     Note: Communications event prevents non-essential commands from working. Players are reminded to fix comms to fix the bot.
     */
     if (word == null) {
-        word = lib.randMessage(["imposter", "cressy", "inscryption", "minecraft", "amongus", "pokemon", "phasmophobia", "league", "rainbow", "reactor",
-            "oxygen", "communications", "lights", "emergency", "watermelon", "mario", "shaykippers", "khazaari", "quack", "chilledoutbanana",
-            "bean", "rayrayraisin", "dragon", "valcoria", "rikoniko", "spacey", "astley", "404pagenotfound", "tacocat", "chaos"]);
+        word = lib.randMessage(["imposter", "cressy", "inscryption", "minecraft", "amongus", "pokemon", "phasmophobia", "league", "rainbow", "reactor","oxygen", "communications", "lights", "emergency", "watermelon", "mario", "shaykippers", "khazaari", "quack", "chilledoutbanana","bean", "rayrayraisin", "dragon", "valcoria", "rikoniko", "spacey", "astley", "404pagenotfound", "tacocat", "chaos"]);
     }
     const word_scramble = scramble(word);
     communicationsState = {"operational": false,"scramble": word_scramble};
 
-    message.channel.send("Communications have been sabotaged!\nUnscramble `" + word_scramble + "` to fix them.")
+    message.channel.send("Communications have been sabotaged!\nUnscramble `" + word_scramble + "` to fix them.");
     .then(async () => {
         await message.channel.awaitMessages(m => m.content.trim().toLowerCase() == word, { max: 1, time: 240000 })
             .then(collected => {
