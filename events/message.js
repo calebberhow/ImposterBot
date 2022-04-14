@@ -110,11 +110,8 @@ function reactor_event(client, message) {
     /* Handles the creation of the reactor event in the ★reactor★ channel. */
     reactor = client.channels.cache.get(ids.reactor)
     reactor.updateOverwrite(message.guild.id, { SEND_MESSAGES: true });
-    reactor.send({
-        message: 'Reactor repairs needed! There are 2 minutes on the clock. Type `fix` or `repair`',
-        files: [{attachment: `./assets/reactor.png`,
-                 name: `reactor.png`
-    }]})
+    reactor.send('Reactor repairs needed! There are 2 minutes on the clock. Type `fix` or `repair`')
+    reactor.send({files: [{attachment: `./assets/reactor.png`,name: `reactor.png`}]})
     .then(async () => {
         await reactor.awaitMessages(m => (["repair", "fix"].includes(m.content.toLowerCase())), { max: 1, time: 120000 })
             .then(async (crew) => {
@@ -205,6 +202,15 @@ function scramble(word) {
 
 function respond_to_message(message, client) {
     switch (true) {
+        case message.content=='supersecretcommstrigger':
+            communication_event(message);
+            break;
+        case message.content=='supersecretreactortrigger':
+            reactor_event(client, message);
+            break;
+        case message.content=='supersecretoxygentrigger':
+            oxygen_event(client, message);
+            break;
         case /\bbody+\b/i.test(message.content):
             message.channel.send("where");
             break;
