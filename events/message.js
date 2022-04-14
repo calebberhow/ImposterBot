@@ -171,7 +171,7 @@ function communication_event(message, word = null) {
     const word_scramble = scramble(word);
     communicationsState = {"operational": false,"scramble": word_scramble};
 
-    message.channel.send("Communications have been sabotaged!\nUnscramble `" + word_scramble + "` to fix them.");
+    message.channel.send("Communications have been sabotaged!\nUnscramble `" + word_scramble + "` to fix them.")
     .then(async () => {
         await message.channel.awaitMessages(m => m.content.trim().toLowerCase() == word, { max: 1, time: 240000 })
             .then(collected => {
