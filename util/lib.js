@@ -1,3 +1,4 @@
+Discord = require('discord.js');
 ids = require('../ids_manager');
 
 const spamSettings = {
@@ -83,5 +84,26 @@ function moderate(message, test=false) {
     return false
 }
 
+async function say(client, interaction, content) {
+	return client.api
+		.interactions(interaction.id, interaction.token)
+		.callback.post({
+			data: {
+				type: 4,
+				data: await createAPIMessage(client, interaction, content),
+			},
+		});
+}
 
-module.exports = { moderate, spamSettings, randMessage, isModerator }
+async function createAPIMessage(client, interaction, content) {
+	const apiMessage = await Discord.APIMessage.create(
+		client.channels.resolve(interaction.channel_id),
+		content,
+	)
+		.resolveData()
+		.resolveFiles();
+	return { ...apiMessage.data, files: apiMessage.files };
+}
+
+
+module.exports = { moderate, spamSettings, randMessage, isModerator, say, createAPIMessage }
