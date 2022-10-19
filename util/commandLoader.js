@@ -1,6 +1,8 @@
-module.exports = (client) => {
-    const requireAll = require('require-all');
-    const path = require('path');
+const requireAll = require('require-all');
+const path = require('path');
+const ids = require('../ids_manager');
+
+module.exports = async (client) => {
 
     const files = requireAll({
         dirname: path.join(__dirname, '../commands'),
@@ -29,4 +31,24 @@ module.exports = (client) => {
         for (const a of cmd.config.aliases) client.aliases.set(a, cmd.config.name);
     } 
     console.log(`Commands loaded: ${names.join(', ')}`);
+
+
+    const ws_commands = requireAll({
+        dirname: path.join(__dirname, '../commands_ws'),
+        filter: /^(?!-)(.+)(?<!.test)\.js$/
+    });
+    var cmds = [];
+    for (const name in ws_commands) {
+        cmds.push(ws_commands[name]);
+    }
+
+    // Load Application Commands
+    client.ws.on("INTERACTION_CREATE", (interaction) => {
+        // console.log('interaction!', interaction)
+        const command = cmds.find(
+            (cmd) => cmd.name.toLowerCase() === interaction.data.name.toLowerCase(),
+        );
+        // console.log(command)
+        command.execute(client, interaction, interaction.data.options);
+    });
 };
