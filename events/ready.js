@@ -32,7 +32,7 @@ module.exports.execute = async (client) => {
     keepAlive();
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity(getRandomStatus());
-    setInterval(function (){
+    setInterval(() =>{
         client.user.setActivity(getRandomStatus());
     }, 420000);
 }

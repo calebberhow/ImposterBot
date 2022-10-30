@@ -7,7 +7,7 @@ const suits = ["diamonds", "hearts", "spades", "clubs"]
 
 const ACE_FOOTER = {text: 'You\'ve drawn an ace!!\nSelect the value you\'d like to assign to your ace.'};
 const END_FOOTER = { text: 'Game End' };
-const HIT_STAY_FOOTER = {content: "Choose to draw another card (hit), or end your hand (stay)"};
+const HIT_STAY_FOOTER = {text: "Choose to draw another card (hit), or end your hand (stay)"};
 
 var defaultEmbed;
 
@@ -22,11 +22,11 @@ const hitstayRow = new ActionRowBuilder()
         new ButtonBuilder()
             .setCustomId('bj_hit')
             .setLabel('Hit')
-            .setStyle(ButtonStyle.Primary),
+            .setStyle(ButtonStyle.Success),
         new ButtonBuilder()
             .setCustomId('bj_stay')    
             .setLabel("Stay")
-            .setStyle(ButtonStyle.Primary),
+            .setStyle(ButtonStyle.Danger),
     );
 
 const aceDecisionRow = new ActionRowBuilder()

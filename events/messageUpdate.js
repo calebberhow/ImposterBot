@@ -1,19 +1,19 @@
-const Discord = require('discord.js');
+const {Events, EmbedBuilder } = require('discord.js');
 const ids = require('../ids_manager');
 const lib = require('../util/lib.js');
 
 module.exports = {
-    name: Discord.Events.MessageUpdate,
+    name: Events.MessageUpdate,
     once: false,
 }
 
-module.exports.execute = (client, message) => {    
+module.exports.execute = (oldMessage, newMessage) => {    
     if (newMessage.author.bot) return;
     
-    lib.moderate(newMessage);
     if (newMessage.guild.id === ids.cozycosmos) {
-        auditEmbed = new Discord.MessageEmbed()
-            .setAuthor(newMessage.author.username, newMessage.author.displayAvatarURL())
+        lib.moderate(newMessage);
+        auditEmbed = new EmbedBuilder()
+            .setAuthor({text: newMessage.author.username, iconURL: newMessage.author.displayAvatarURL()})
             .setTitle(newMessage.channel.name)
             .setDescription(newMessage.content)
             .setTimestamp()
