@@ -27,8 +27,7 @@ module.exports = {
     once: false,
 }
 
-module.exports.execute = (client,  message) => {
-    console.log('RECIEVED MESSAGE');
+module.exports.execute = (client, message) => {
     if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
     antiSpam.message(message).catch(err => console.log(err));
 
@@ -40,12 +39,10 @@ module.exports.execute = (client,  message) => {
     event_handler(client, message, counter);
     respond_to_message(message, client);
 
-    console.log(message.mentions)
-    console.log(client.user)
     // React to @ mentions <-- If this gets more complex, extract to a global function
     if (message.mentions.has(client.user)) {
         let rand = lib.randMessage(["I'm not the imposter.", "...?", "Red sus.", "*ImposterBot was ejected.*", "*ImposterBot has voted. 5 votes remaining.*", "I'm just a crewmate, what about you?", "I finished all my tasks.", "Lock the doors.", "*votes you for random accusations*","What?", "If you saw me vent, that's because I am the engineer."]);
-        message.channel.send(rand);
+        message.channel.send({content:rand});
     }
 
     // React to messages <-- If this gets more complex, extract to a global function
@@ -57,7 +54,7 @@ module.exports.execute = (client,  message) => {
     // Ghost <-- If this gets more complex, extract to a global function with appropriate naming
     var word = ghost.process(message);
     if (word != null) {
-        communication_event(message, word)
+        communication_event(message, word);
     }
 }
 
@@ -69,7 +66,9 @@ function command_handler(client, message) {
     var [cmd, ...args] = message.content.trim().slice(ids.prefix.length).split(/\s+/g);
     const command = client.commands.get(cmd.toLowerCase()) || client.commands.get(client.aliases.get(cmd.toLowerCase()));
     if (message.content.startsWith(ids.prefix) && command) {
-        if (!communicationsState['operational'] && !command.config.essential) return message.channel.send("Communications are offline!\nUnscramble `" + communicationsState['scramble'] + "` to fix them.")
+        if (!communicationsState['operational'] && !command.config.essential) {
+            return message.channel.send("Communications are offline!\nUnscramble `" + communicationsState['scramble'] + "` to fix them.");
+        }
         else {
             command.run(client, message, args);
             console.log(`Executing ${command.config.name} command for ${message.author.tag}.`);
@@ -83,11 +82,11 @@ function audit(message) {
     /* Sends an embed of messages to the audit log channel for moderation purposes */
     if (![ids.announcementChannelID, ids.managerChannelID, ids.auditLogChannelID, ids.developerChannelID].includes(message.channel.id)) {
         auditEmbed = new EmbedBuilder()
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+            .setAuthor({name: message.author.username, iconURL: message.author.displayAvatarURL()})
             .setTitle(message.channel.name)
             .setDescription(message.content)
             .setTimestamp();
-        message.guild.channels.cache.get(ids.auditLogChannelID).send(auditEmbed);
+        message.guild.channels.cache.get(ids.auditLogChannelID).send({embeds:[auditEmbed]});
     }
 }
 

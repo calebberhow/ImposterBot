@@ -10,6 +10,6 @@ module.exports.data = new SlashCommandBuilder()
         .setDescription('member you would like to mute')
         .setRequired(true));
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     await interaction.reply({content: "Not yet implemented", ephemeral: true});
 }

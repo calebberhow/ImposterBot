@@ -7,7 +7,6 @@ for (const file of commandFiles) {
     const cmd = require(`../commands_ws/${file}`);
     commands.push(cmd);
 }
-console.log(`Loaded slash commands: ${commands.map(cmd => cmd.data.name).join(', ')}`)
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -17,12 +16,13 @@ module.exports = {
 module.exports.execute = (client, interaction) => {
     switch(true) {
         case interaction.isCommand():
+            console.log(`Executing slash command: ${interaction.commandName} for ${interaction.user.username}`)
             var cmd = commands.find(c => c.data.name === interaction.commandName)
-            if (cmd) cmd.execute(client, interaction);
+            if (cmd) cmd.execute(interaction);
             break;
         case interaction.isButton():
             var cmd = commands.find(c => c.data.name === interaction.customId)
-            if (cmd) cmd.execute(client, interaction);
+            if (cmd) cmd.execute(interaction);
             break;
         case interaction.isAutocomplete():
             throw new Error("Autocomplete interactions not implemented")

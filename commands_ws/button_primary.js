@@ -3,6 +3,6 @@ module.exports.data = {
     isButton: true,
 }
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     console.log(interaction)
 }

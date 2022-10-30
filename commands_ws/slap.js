@@ -14,7 +14,7 @@ module.exports.data = new SlashCommandBuilder()
         .setDescription('user you want to slap')
         .setRequired(true))
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     target = interaction.options.getUser('target');
     author = interaction.member.user;
 

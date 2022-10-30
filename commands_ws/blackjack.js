@@ -5,10 +5,17 @@ const colors = require('../util/colors.js');
 const cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
 const suits = ["diamonds", "hearts", "spades", "clubs"]
 
-
-var author;
+const ACE_FOOTER = {text: 'You\'ve drawn an ace!!\nSelect the value you\'d like to assign to your ace.'};
+const END_FOOTER = { text: 'Game End' };
+const HIT_STAY_FOOTER = {content: "Choose to draw another card (hit), or end your hand (stay)"};
 
 var defaultEmbed;
+
+const rulesEMBD = new EmbedBuilder()
+    .setAuthor({name:'Wikipedia Reference [en.wikipedia.org/wiki/Blackjack]', url:'https://en.wikipedia.org/wiki/Blackjack'})
+    .setTitle('Blackjack Rules')
+    .setDescription("The most widely played casino banking game in the world, it uses decks of 52 cards and descends from a global family of casino banking games known as Twenty-One.Blackjack players do not compete against each other. The game is a comparing card game where each player competes against the dealer. ")
+    .setColor(colors.purple)
 
 const hitstayRow = new ActionRowBuilder()
     .addComponents(
@@ -40,52 +47,64 @@ module.exports.data = new SlashCommandBuilder()
     .addBooleanOption(option => option
         .setName('private')
         .setDescription('Determines if your game is private (ephemeral)')
-    );
+        .setRequired(false))
+    .addBooleanOption(option => option
+        .setName('help')
+        .setDescription('Enter true if you want to know the rules of the game')
+        .setRequired(false));
 
-module.exports.execute = async (client, interaction) => {
-    private = interaction.options.getBoolean('private', false);
-    author = interaction.member.user;
-
-    defaultEmbed = new EmbedBuilder()
-        .setTitle('Blackjack')
-        .setColor(colors.green)
-        .setAuthor({name:`${author.username}'s Game`})
-        .setThumbnail('https://i.imgur.com/ibt3ETF.png');
-    
-    await interaction.reply({
-        embeds: [defaultEmbed],
-        ephemeral: private? private : false
-    });
-
+module.exports.execute = async interaction => {
+    const p = interaction.options.getBoolean('private', false);
     var state = {
         dealercards: [],
         playercards: [],
         score: 0,
-        end: false
+        end: false,
+        ephemeral: (p? p : false),
     }
+    
+    if (interaction.options.getBoolean('help', false)) {
+        return await interaction.reply({
+            embeds: [rulesEMBD],
+            ephemeral: state.ephemeral,
+        });
+    }
+    
+    defaultEmbed = new EmbedBuilder()
+        .setTitle('Blackjack')
+        .setColor(colors.green)
+        .setAuthor({name:`${interaction.user.username}'s Game`})
+        .setThumbnail('https://i.imgur.com/ibt3ETF.png');
+    
+    await interaction.reply({
+        embeds: [defaultEmbed],
+        ephemeral: state.ephemeral,
+    });
+
+    
 
     // Gets the player and dealer initial cards.
     state = drawDeal(state);
-    state = await drawCard(interaction, state);
-    state = await drawCard(interaction, state);
-    state.score = state.playercards.map(card => card.value).reduce((a,b) => a + b)
 
+    for (var i = 0; i < 2; i++) {
+        state = await drawCard(interaction, state);
+        if (state.end) await doGameEnd(interaction, state); // If player draws ace and does not respond, we have to end the game.
+    }
+    
     doGameLoop(interaction, state)
 }
 
 async function doGameLoop(interaction, state) {
     while(true) {
-        console.log(state)
-        state = await hitstay(interaction, state);
         // Calculates player score every loop
         state.score = state.playercards.map(card => card.value).reduce((a,b) => a + b)
 
+        console.log(state)
+        state = await hitstay(interaction, state);
+
         // Finish condition (score greater than 21, or player said stay)
         if (state.score > 21 || state.end) {
-            interaction.editReply({
-                embeds:[defaultEmbed.setDescription(getDescription(state, interaction)).setFooter({text:'Game End'})],
-                components: []
-            });
+            await doGameEnd(interaction, state);
             break;
         }
     }
@@ -105,6 +124,13 @@ class Card {
     }
 }
 
+async function doGameEnd(interaction, state) {
+    await interaction.editReply({
+        embeds: [defaultEmbed.setDescription(getDescription(state, interaction)).setFooter(END_FOOTER)],
+        components: []
+    });
+}
+
 // Get top and bottom emojis for input card
 function getEmojis(card, interaction) {
     return [interaction.client.emojis.cache.get(ids[`_${card.card}${card.color}`]).toString(), interaction.client.emojis.cache.get(ids[`${card.suit}`]).toString()]
@@ -118,11 +144,11 @@ function randInt(begin, ending) {
 // Allows the player to either hit or stay
 async function hitstay(interaction, state) {
     await interaction.editReply({
-        embeds: [defaultEmbed.setDescription(getDescription(state, interaction))],
+        embeds: [defaultEmbed.setDescription(getDescription(state, interaction)).setFooter(HIT_STAY_FOOTER)],
         components: [hitstayRow], // Add buttons
     });
 
-    const interaction_filter = (i) => ((i.customId === 'bj_hit'|| i.customId == 'bj_stay') && i.user.id === author.id);
+    const interaction_filter = (i) => ((i.customId === 'bj_hit'|| i.customId == 'bj_stay') && i.user.id === interaction.user.id);
 
     return await interaction.channel.awaitMessageComponent({ interaction_filter, componentType: ComponentType.Button, time: 30000 })
         .then(async i =>{
@@ -145,11 +171,7 @@ async function hitstay(interaction, state) {
             });
             return state;
 
-        }).catch((err) => {
-            interaction.channel.send('Game closed due to inactivity.');
-            state.end = true;
-            return state
-        });
+        }).catch(err => catchTimeOutError(interaction, state));
 }
 
 // Draws dealer's cards. (either 2 or 3 are drawn)
@@ -193,24 +215,25 @@ async function drawCard(interaction, state) {
 
     await interaction.editReply({
         embeds: [defaultEmbed.setDescription(getDescription(state, interaction))],
+        components: [],
     });
     return state
 }
 
 async function ace(interaction, state) {
     interaction.editReply({
-        embeds:[defaultEmbed.setDescription(getDescription(state, interaction)).setFooter({text: 'Select the value you\'d like to assign to your ace.'})],
+        embeds:[defaultEmbed.setDescription(getDescription(state, interaction)).setFooter(ACE_FOOTER)],
         components: [aceDecisionRow]
     });
 
-    const interaction_filter = (i) => ((i.customId === 'bj_11'|| i.customId == 'bj_1') && i.user.id === author.id);
+    const interaction_filter = (i) => ((i.customId === 'bj_11'|| i.customId == 'bj_1') && i.user.id === interaction.user.id);
     
-    return await interaction.channel.awaitMessageComponent({ interaction_filter, componentType: ComponentType.Button, time: 15000 })
+    return await interaction.channel.awaitMessageComponent({ interaction_filter, componentType: ComponentType.Button, time: 30000 })
         .then(i =>{
             i.update({components: []});
             if (i.customId == 'bj_11') return 11;
             return 1;
-        }).catch(err => console.error(err))
+        }).catch(err => { state = catchTimeOutError(interaction, state); return 0; });
 }
 
 // Get the description of the gamestate for the embed
@@ -242,4 +265,10 @@ function topEmojis(cardlist, interaction) {
 // Returns bottom half of the image for every card/suit combination
 function bottomEmojis(cardlist, interaction) {
     return cardlist.map(card => getEmojis(card, interaction)[1]);
+}
+
+function catchTimeOutError(interaction, state) {
+    interaction.followUp({content:'Game closed due to inactivity.', ephemeral: state.ephemeral});
+    state.end = true;
+    return state;
 }

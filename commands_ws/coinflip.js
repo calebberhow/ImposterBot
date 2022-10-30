@@ -4,7 +4,7 @@ module.exports.data = new SlashCommandBuilder()
     .setName('coinflip')
     .setDescription('flip a coin');
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     var rand = lib.randMessage(["It's heads.", "It's tails."])
     var embd = new EmbedBuilder()
         .setTitle('Coin Flip')

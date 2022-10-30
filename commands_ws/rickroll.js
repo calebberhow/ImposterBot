@@ -4,6 +4,6 @@ module.exports.data = new SlashCommandBuilder()
     .setName('rickroll')
     .setDescription('Rickroll your voice channel! (WIP).')
 
-module.exports.execute = (client, interaction) => {
+module.exports.execute = (interaction) => {
     interaction.reply('Not yet implemented!');
 }

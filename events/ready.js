@@ -26,7 +26,8 @@ module.exports.execute = async (client) => {
         { body: commandsJSON },
     );
 
-    console.log(`Uploaded ${data.length} slash commands.`)
+    console.log(`Uploaded ${data.length} slash commands: ${commandsJSON.map(cmd => cmd.name).join(', ')}`)
+
 
     keepAlive();
     console.log(`Logged in as ${client.user.tag}!`);

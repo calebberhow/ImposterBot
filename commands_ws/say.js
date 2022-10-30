@@ -11,6 +11,6 @@ module.exports = {
 }
 
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     await interaction.reply(interaction.options.getString('text'));
 }

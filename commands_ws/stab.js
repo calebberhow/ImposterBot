@@ -8,6 +8,6 @@ module.exports.data = new SlashCommandBuilder()
         .setDescription('friend you would like to stab')
         .setRequired(true));
 
-module.exports.execute = async () => {
+module.exports.execute = async (interaction) => {
     await interaction.reply("Not yet implemented");
 }

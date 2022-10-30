@@ -1,11 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const colors = require('../util/colors.js');
-module.exports.data = new SlashCommandBuilder()
-    .setName('hideandseek')
-    .setDescription('Privately gives you the rules to the unofficial AmongUs gamemode Hide and Seek.');
 
-module.exports.execute = (client, interaction) => {
-    var embed = new EmbedBuilder()
+const embed = new EmbedBuilder()
     .setTitle('For a custom (unofficial) game mode in Among Us that you can host on this server!')
     .setDescription(
 `**Rules (for crewmates):**
@@ -27,5 +23,10 @@ Taskbar: Keep viewable so imposter can sabotage comms
 Short tasks: 3 (Recommended)`)
     .setColor(colors.royalblue)
 
+module.exports.data = new SlashCommandBuilder()
+    .setName('hideandseek')
+    .setDescription('Privately gives you the rules to the unofficial AmongUs gamemode Hide and Seek.');
+
+module.exports.execute = (interaction) => {
     interaction.reply({ embeds: [embed], ephemeral: true })
 }

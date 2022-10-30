@@ -20,14 +20,14 @@ module.exports.data = new SlashCommandBuilder()
         .setDescription('amount to modify roll by')
         .setRequired(false));
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     const sides = interaction.options.getInteger('sides', true);
     const modifier = interaction.options.getInteger('modifier', false);
     const random = Math.ceil(Math.random() * sides);
     const author = interaction.member.user;
     var embd = new EmbedBuilder()
         .setThumbnail(`attachment://${random}.png`)
-        .setAuthor({name:`${author.username} rolls 1d${sides}`})
+        .setAuthor({name:`${author.username} rolls 1d${sides}`, iconURL: author.displayAvatarURL()})
         .setColor(makeColor(random, sides))
         .setDescription(`${random == 1 ? "Critical **FAIL**" : `It rolled ${random}`}${!modifier ? "" : ` + ${modifier} (${random+modifier})`}!`);
     

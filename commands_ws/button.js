@@ -5,7 +5,7 @@ module.exports.data = new SlashCommandBuilder()
     .setDescription('buttons!! (WIP).')
 
 
-module.exports.execute = async (client, interaction) => {
+module.exports.execute = async (interaction) => {
     const row = new ActionRowBuilder()
         .addComponents(
             new ButtonBuilder()
