@@ -37,8 +37,13 @@ const aceDecisionRow = new ActionRowBuilder()
 module.exports.data = new SlashCommandBuilder()
     .setName('blackjack')
     .setDescription('play blackjack!')
+    .addBooleanOption(option => option
+        .setName('private')
+        .setDescription('Determines if your game is private (ephemeral)')
+    );
 
 module.exports.execute = async (client, interaction) => {
+    private = interaction.options.getBoolean('private', false);
     author = interaction.member.user;
 
     defaultEmbed = new EmbedBuilder()
@@ -49,6 +54,7 @@ module.exports.execute = async (client, interaction) => {
     
     await interaction.reply({
         embeds: [defaultEmbed],
+        ephemeral: private? private : false
     });
 
     var state = {
@@ -111,11 +117,11 @@ function randInt(begin, ending) {
 
 // Allows the player to either hit or stay
 async function hitstay(interaction, state) {
-    // Inform user what to do
     await interaction.editReply({
         embeds: [defaultEmbed.setDescription(getDescription(state, interaction))],
-        components: [hitstayRow],
+        components: [hitstayRow], // Add buttons
     });
+
     const interaction_filter = (i) => ((i.customId === 'bj_hit'|| i.customId == 'bj_stay') && i.user.id === author.id);
 
     return await interaction.channel.awaitMessageComponent({ interaction_filter, componentType: ComponentType.Button, time: 30000 })
@@ -123,7 +129,6 @@ async function hitstay(interaction, state) {
             i.update({components: []}); // Remove buttons
 
             if (i.customId == 'bj_hit') {
-                state.end = false;
                 state = await drawCard(interaction, state);
 
                 interaction.editReply({
@@ -194,7 +199,7 @@ async function drawCard(interaction, state) {
 
 async function ace(interaction, state) {
     interaction.editReply({
-        embeds:[defaultEmbed.setDescription(getDescription(state, interaction))],
+        embeds:[defaultEmbed.setDescription(getDescription(state, interaction)).setFooter({text: 'Select the value you\'d like to assign to your ace.'})],
         components: [aceDecisionRow]
     });
 
