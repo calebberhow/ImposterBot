@@ -17,7 +17,7 @@ module.exports.execute = async (client) => {
     commandsJSON = []
     for (const file of commandFiles) {
         const cmd = require(`../commands_ws/${file}`);
-        if (!cmd.isButton) commandsJSON.push(cmd.data.toJSON());
+        if (!cmd.data.isButton) commandsJSON.push(cmd.data.toJSON());
     }
 
     const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN);

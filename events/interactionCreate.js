@@ -1,4 +1,4 @@
-const {Events} = require('discord.js');
+const { Events, Iteraction } = require('discord.js');
 const fs = require('node:fs');
 
 const commandFiles = fs.readdirSync('./commands_ws/').filter(file => file.endsWith('.js'));
@@ -7,6 +7,7 @@ for (const file of commandFiles) {
     const cmd = require(`../commands_ws/${file}`);
     commands.push(cmd);
 }
+console.log(`Loaded slash commands: ${commands.map(cmd => cmd.data.name).join(', ')}`)
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -14,16 +15,30 @@ module.exports = {
 };
 
 module.exports.execute = (client, interaction) => {
-    if (interaction.isButton()) {
-        const cmd = commands.find(c => c.name === interaction.customId);
-        cmd.execute(client, interaction);
-    }
-    else {
-        const command = commands.find((cmd) => {
-            return cmd.data.name.toLowerCase() === interaction.commandName.toLowerCase();
-        });
-
-        // These commands are async, but we don't have to await their completion before continuing.
-        command.execute(client, interaction);
+    switch(true) {
+        case interaction.isCommand():
+            var cmd = commands.find(c => c.data.name === interaction.commandName)
+            if (cmd) cmd.execute(client, interaction);
+            break;
+        case interaction.isButton():
+            var cmd = commands.find(c => c.data.name === interaction.customId)
+            if (cmd) cmd.execute(client, interaction);
+            break;
+        case interaction.isAutocomplete():
+            throw new Error("Autocomplete interactions not implemented")
+        case interaction.isChatInputCommand():
+            throw new Error("ChatInputCommand interactions not implemented");
+        case interaction.isContextMenuCommand():
+            throw new Error("ContextMenuCommand interactions not implemented");
+        case interaction.isMessageComponent():
+            throw new Error("MessageComponent interactions not implemented");
+        case interaction.isMessageContextMenuCommand():
+            throw new Error("MessageContextMenuCommand interactions not implemented");
+        case interaction.isModalSubmit():
+            throw new Error("ModalSubmit interactions not implemented");
+        case interaction.isSelectMenu():
+            throw new Error("SelectMenu interactions not implemented");
+        case interaction.isUserContextMenuCommand():
+            throw new Error("UserContextMenuCommand interactions not implemented");
     }
 };

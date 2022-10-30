@@ -2,7 +2,7 @@ const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 
 module.exports.data = new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('roll a dice! (WIP).')
+    .setDescription('roll a dice!')
     .addIntegerOption(option => option
         .setName('sides')
         .setDescription('Number of sides you want on the dice you roll')

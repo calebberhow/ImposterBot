@@ -8,7 +8,7 @@ const hug_assets_dir = './assets/hug';
 
 module.exports.data = new SlashCommandBuilder()
     .setName('hug')
-    .setDescription('Hug your friend! (WIP).')
+    .setDescription('Hug your friend!')
     .addUserOption(option => option
         .setName('target')
         .setDescription('user you want to hug')
