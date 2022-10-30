@@ -1,34 +1,39 @@
+const {REST, Routes, Events} = require('discord.js');
 const keepAlive = require('../server');
+const ids = require('../ids_manager');
 const lib = require('../util/lib.js');
-const requireAll = require('require-all');
-const path = require('path');
+const fs = require('node:fs');
 
-module.exports = async (client) => {
+module.exports = {
+    name: Events.ClientReady,
+    once: true,
+}
 
-  // Must be here because client.user.id does NOT exist until the bot is logged in.
-  const ws_commands = requireAll({
-    dirname: path.join(__dirname, '../commands_ws'),
-    filter: /^(?!-)(.+)(?<!.test)\.js$/
-  });
+module.exports.execute = async (client) => {
+    // Grab all the command files from the commands directory you created earlier
+    const commandFiles = fs.readdirSync('./commands_ws/').filter(file => file.endsWith('.js'));
 
-  for (const name in ws_commands) {
-      const cmd = ws_commands[name];
+    // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+    commandsJSON = []
+    for (const file of commandFiles) {
+        const cmd = require(`../commands_ws/${file}`);
+        if (!cmd.isButton) commandsJSON.push(cmd.data.toJSON());
+    }
 
-      await client.api.applications(client.user.id).guilds(ids.serverID).commands.post({
-          data: {
-              name: cmd.name,
-              description: cmd.description,
-              options: cmd.options,
-          },
-    });
-  }
+    const rest = new REST({ version: '10' }).setToken(process.env.CLIENT_TOKEN);
+    const data = await rest.put(
+        Routes.applicationGuildCommands(ids.clientID, ids.serverID),
+        { body: commandsJSON },
+    );
 
-  keepAlive();
-  console.log(`Logged in as ${client.user.tag}!`);
-  client.user.setActivity(getRandomStatus());
-  setInterval(function (){
+    console.log(`Uploaded ${data.length} slash commands.`)
+
+    keepAlive();
+    console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity(getRandomStatus());
-  }, 420000);
+    setInterval(function (){
+        client.user.setActivity(getRandomStatus());
+    }, 420000);
 }
 
 function getRandomStatus() {
@@ -46,6 +51,6 @@ function getRandomStatus() {
         "League of Legends",
         "suspenseful music",
         ["Pokémon: Shiny Hunting",0.25], 
-        ["Pokémon GO",0.25],
-        ]) + " | !commands";
+        ["Pokémon GO",0.25]]
+    ) + " | !commands";
 }

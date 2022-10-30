@@ -1,20 +1,20 @@
 const requireAll = require('require-all');
 const path = require('path');
-
+const fs = require('node:fs');
 module.exports = (client) => {
     client.removeAllListeners();
     
-    const files_events = requireAll({
-        dirname: path.join(__dirname,'../events'),
-        filter: /^(?!-)(.+)(?<!.test)\.js$/
-    });
-
-    var names = [];
-    for (const name in files_events) {
-        const event = files_events[name];
-        names.push(name);
-        client.on(name, event.bind(null,client));
+    const eventFiles = fs.readdirSync('./events').filter(file => (file.endsWith('.js') && !file.endsWith('.test.js')));
+    
+    for (const file of eventFiles) {
+        const filePath = path.join('../events', file);
+        const event = require(filePath);
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(client, ...args));
+        } else {
+            client.on(event.name, (...args) => event.execute(client, ...args));
+        }
     }
-    console.log(`Events loaded: ${names.join(', ')}`);
+    console.log(`Events loaded: ${eventFiles.join(', ')}`);
 };
 

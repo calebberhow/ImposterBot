@@ -1,5 +1,6 @@
-Discord = require('discord.js');
-ids = require('../ids_manager');
+const Discord = require('discord.js');
+const ids = require('../ids_manager');
+const fetch = require('node-fetch')
 
 const spamSettings = {
     /* Settings that are used for the discord AntiSpam module in message.js ../events/message.js */
@@ -84,21 +85,28 @@ function moderate(message, test=false) {
     return false
 }
 
-async function say(client, interaction, content) {
-	return client.api
+/**
+ * Replies to the given interaction with the given content
+ * @param {Discord.client} client 
+ * @param {json} interaction 
+ * @param {*} content Message to reply with (string or embed)
+ */
+async function interactionReply(client, interaction, content, MessageOptions) {
+    return client.api
 		.interactions(interaction.id, interaction.token)
 		.callback.post({
 			data: {
 				type: 4,
-				data: await createAPIMessage(client, interaction, content),
+				data: await createAPIMessage(client, interaction, content, MessageOptions),
 			},
 		});
 }
 
-async function createAPIMessage(client, interaction, content) {
+async function createAPIMessage(client, interaction, content, MessageOptions) {
 	const apiMessage = await Discord.APIMessage.create(
 		client.channels.resolve(interaction.channel_id),
 		content,
+        extra=MessageOptions
 	)
 		.resolveData()
 		.resolveFiles();
@@ -106,4 +114,14 @@ async function createAPIMessage(client, interaction, content) {
 }
 
 
-module.exports = { moderate, spamSettings, randMessage, isModerator, say, createAPIMessage }
+async function fetchUser (id) {
+    const response = await fetch(`https://discord.com/api/v9/users/${id}`, {
+        headers: {
+        Authorization: `Bot ${process.env.CLIENT_TOKEN}`
+        }
+    })
+    if (!response.ok) throw new Error(`Error status code: ${response.status}`)
+    return await response.json()
+}
+
+module.exports = { moderate, spamSettings, randMessage, isModerator, interactionReply, createAPIMessage, fetchUser }

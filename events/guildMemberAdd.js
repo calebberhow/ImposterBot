@@ -2,7 +2,12 @@ const Discord = require('discord.js');
 const ids = require('../ids_manager');
 const colors = require('../util/colors.js');
 
-module.exports = (client, member) => {
+module.exports = {
+    name: Discord.Events.GuildMemberAdd,
+    once: false,
+}
+
+module.exports.execute = (client, member) => {
   // give newcomers members role
   if (member.guild.id !== ids.cozycosmos) return;
   const memberRole = member.guild.roles.cache.find(role => role.name === "Members");

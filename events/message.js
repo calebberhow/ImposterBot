@@ -4,9 +4,11 @@ Manages the message discord event. This event is triggered whenever a message is
 First, this script manages, records, and punishes spam automatically using discord anti spam.
 Next, commands are processed. If the message is a command, this command is executed.
 If the message is not a command, it is moderated and appropriately responded to.
+
+FIX: MESSAGES ARE NOT BEING REGISTERED HERE AT ALL ANYMORE.
 */
 
-const Discord = require('discord.js');
+const {Events, EmbedBuilder} = require('discord.js');
 const ids = require('../ids_manager');
 const lib = require('../util/lib.js');
 const ghost = require('../util/ghost.js')()
@@ -19,35 +21,43 @@ let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
 const antiSpam = new AntiSpam(lib.spamSettings);
 
-module.exports = (client, message) => {
+module.exports = {
+    name: Events.MessageCreate,
+    // name: 'message',
+    once: false,
+}
+
+module.exports.execute = (client,  message) => {
+    console.log('RECIEVED MESSAGE');
     if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
     antiSpam.message(message).catch(err => console.log(err));
 
     const isCommand = command_handler(client, message);
+    if (isCommand) return;
 
-    if (!isCommand) {
-        lib.moderate(message);
-        audit(message);
-        event_handler(client, message, counter);
-        respond_to_message(message, client);
+    lib.moderate(message);
+    audit(message);
+    event_handler(client, message, counter);
+    respond_to_message(message, client);
 
-        // React to @ mentions <-- If this gets more complex, extract to a global function
-        if (message.mentions.has(client.user)) {
-            let rand = lib.randMessage(["I'm not the imposter.", "...?", "Red sus.", "*ImposterBot was ejected.*", "*ImposterBot has voted. 5 votes remaining.*", "I'm just a crewmate, what about you?", "I finished all my tasks.", "Lock the doors.", "*votes you for random accusations*","What?", "If you saw me vent, that's because I am the engineer."]);
-            message.channel.send(rand);
-        }
+    console.log(message.mentions)
+    console.log(client.user)
+    // React to @ mentions <-- If this gets more complex, extract to a global function
+    if (message.mentions.has(client.user)) {
+        let rand = lib.randMessage(["I'm not the imposter.", "...?", "Red sus.", "*ImposterBot was ejected.*", "*ImposterBot has voted. 5 votes remaining.*", "I'm just a crewmate, what about you?", "I finished all my tasks.", "Lock the doors.", "*votes you for random accusations*","What?", "If you saw me vent, that's because I am the engineer."]);
+        message.channel.send(rand);
+    }
 
-        // React to messages <-- If this gets more complex, extract to a global function
-        if (message.author.id == ids.cressyID) {
-            if (Math.ceil(Math.random() * 30) == 30 || /\bfurry+\b/i.test(message.content)) message.react(client.emojis.cache.get(ids.doggothinkID));
-        }
-        else if (Math.ceil(Math.random() * 90) == 90) message.react(lib.randMessage(["❤️", client.emojis.cache.get(ids.doggoheartID)]));
+    // React to messages <-- If this gets more complex, extract to a global function
+    if (message.author.id == ids.cressyID) {
+        if (Math.ceil(Math.random() * 30) == 30 || /\bfurry+\b/i.test(message.content)) message.react(client.emojis.cache.get(ids.doggothinkID));
+    }
+    else if (Math.ceil(Math.random() * 90) == 90) message.react(lib.randMessage(["❤️", client.emojis.cache.get(ids.doggoheartID)]));
 
-        // Ghost <-- If this gets more complex, extract to a global function with appropriate naming
-        var word = ghost.process(message);
-        if (word != null) {
-            communication_event(message, word)
-        }
+    // Ghost <-- If this gets more complex, extract to a global function with appropriate naming
+    var word = ghost.process(message);
+    if (word != null) {
+        communication_event(message, word)
     }
 }
 
@@ -72,7 +82,7 @@ function command_handler(client, message) {
 function audit(message) {
     /* Sends an embed of messages to the audit log channel for moderation purposes */
     if (![ids.announcementChannelID, ids.managerChannelID, ids.auditLogChannelID, ids.developerChannelID].includes(message.channel.id)) {
-        auditEmbed = new Discord.MessageEmbed()
+        auditEmbed = new EmbedBuilder()
             .setAuthor(message.author.username, message.author.displayAvatarURL())
             .setTitle(message.channel.name)
             .setDescription(message.content)

@@ -1,18 +1,16 @@
-const say = require('../util/lib').say;
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
-	name: "say",
-	description: "Say command.",
-	options: [
-		{
-			name: "text",
-			description: "You can print something on the bot.",
-			type: 3,
-			required: true,
-		}
-	],
+    data: new SlashCommandBuilder()
+        .setName('say')
+        .setDescription('Say command.')
+        .addStringOption(option => option
+                .setName('text')
+                .setDescription('text to say.')
+                .setRequired(true))
+}
 
-	async execute(client, interaction, args) {
-		await say(client, interaction, args[0].value);
-	},
+
+module.exports.execute = async (client, interaction) => {
+    await interaction.reply(interaction.options.getString('text'));
 }

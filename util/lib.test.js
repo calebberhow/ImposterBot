@@ -30,3 +30,13 @@ test('moderate()', () => {
     expect(lib.moderate({content: "tranny"}, true)).toBe(true)
     expect(lib.moderate({content: "killxd yourselfasdffh"}, true)).toBe(true)
 });
+
+test('discord_version >= v13', () => {
+    const semver = require('semver');
+    expect(semver.gte(require('discord.js').version, '13.0.0')).toBe(true)
+});
+
+test('node_version >= v16', () => {
+    const semver = require('semver');
+    expect(semver.gte(process.version, '16.6.0')).toBe(true)
+});
