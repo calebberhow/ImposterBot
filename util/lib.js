@@ -63,7 +63,7 @@ function moderate(message, test=false) {
     var reglist = [/\bfag+s*?\b/i, /\bdyke+s?\b/i, /\bf.*ggot+s?.*\bb/i, /\bkys+\b/i, /\bkill.* yourself+.*\b/i, /\bretard+(s+)?.*\b/i, /\bretarded+.*\b/i, /\bn.gger+s.*?\b/i, /\bn.gga+s.*?\b/i, /\bwhore+s?\b/i, /\btranny+\b/i];
     var i;
     for (i = 0; i < reglist.length; i++) {
-        if (!message.content.match(reglist[i])) return false;
+        if (!message.content.match(reglist[i])) continue;
 
         if (test) return true;
 
@@ -76,6 +76,7 @@ function moderate(message, test=false) {
         managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
         return true
     }
+    return false
 }
 
 
