@@ -1,8 +1,8 @@
 const {SlashCommandBuilder, ButtonStyle, ButtonBuilder, EmbedBuilder, ActionRowBuilder} = require('discord.js');
 
 module.exports.data = new SlashCommandBuilder()
-.setName('button')
-.setDescription('buttons!! (WIP).')
+    .setName('button')
+    .setDescription('buttons!! (WIP).')
 
 
 module.exports.execute = async (client, interaction) => {
