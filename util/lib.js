@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const ids = require('../ids_manager');
 const fetch = require('node-fetch')
 
@@ -53,9 +52,7 @@ function isModerator(member) {
     if (member.roles.cache.find(r => r.name === "Moderator")) {
         return true
     }
-    else {
-        return false
-    }
+    return false
 }
 
 
@@ -66,62 +63,30 @@ function moderate(message, test=false) {
     var reglist = [/\bfag+s*?\b/i, /\bdyke+s?\b/i, /\bf.*ggot+s?.*\bb/i, /\bkys+\b/i, /\bkill.* yourself+.*\b/i, /\bretard+(s+)?.*\b/i, /\bretarded+.*\b/i, /\bn.gger+s.*?\b/i, /\bn.gga+s.*?\b/i, /\bwhore+s?\b/i, /\btranny+\b/i];
     var i;
     for (i = 0; i < reglist.length; i++) {
-        if (message.content.match(reglist[i])) {
-            if (!test) {
-                matched = i + 1;
-                message.delete();
-                message.member.roles.add(ids.mutedRoleID);
-                message.reply("Your message has been deleted. Please check your DMs.");
-                message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
-                managerChannel.send(`<@&${ids.managerRoleID}>`);
-                managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
-                return true
-            }
-            else {
-                return true
-            }
-        }
+        if (!message.content.match(reglist[i])) return false;
+
+        if (test) return true;
+
+        matched = i + 1;
+        message.delete();
+        message.member.roles.add(ids.mutedRoleID);
+        message.reply("Your message has been deleted. Please check your DMs.");
+        message.author.send("Your message has been deleted due to the violation of rule 1. You have also been muted on the server. If this was a mistake, contact a moderator.");
+        managerChannel.send(`<@&${ids.managerRoleID}>`);
+        managerChannel.send('User "' + message.author.username + '" said a no-no. Regex matched: ' + matched);
+        return true
     }
-    return false
-}
-
-/**
- * Replies to the given interaction with the given content
- * @param {Discord.client} client 
- * @param {json} interaction 
- * @param {*} content Message to reply with (string or embed)
- */
-async function interactionReply(client, interaction, content, MessageOptions) {
-    return client.api
-		.interactions(interaction.id, interaction.token)
-		.callback.post({
-			data: {
-				type: 4,
-				data: await createAPIMessage(client, interaction, content, MessageOptions),
-			},
-		});
-}
-
-async function createAPIMessage(client, interaction, content, MessageOptions) {
-	const apiMessage = await Discord.APIMessage.create(
-		client.channels.resolve(interaction.channel_id),
-		content,
-        extra=MessageOptions
-	)
-		.resolveData()
-		.resolveFiles();
-	return { ...apiMessage.data, files: apiMessage.files };
 }
 
 
 async function fetchUser (id) {
     const response = await fetch(`https://discord.com/api/v9/users/${id}`, {
         headers: {
-        Authorization: `Bot ${process.env.CLIENT_TOKEN}`
+            Authorization: `Bot ${process.env.CLIENT_TOKEN}`
         }
     })
     if (!response.ok) throw new Error(`Error status code: ${response.status}`)
     return await response.json()
 }
 
-module.exports = { moderate, spamSettings, randMessage, isModerator, interactionReply, createAPIMessage, fetchUser }
+module.exports = { moderate, spamSettings, randMessage, isModerator, fetchUser }
