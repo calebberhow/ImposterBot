@@ -42,8 +42,8 @@ module.exports.execute = async (interaction) => {
     // If the cache is too small, there won't be anybody to pick from. This means we are not guaranteed to have enough options.
     randomMembers_confirmed = members.filter(remove_already_picked).filter(filter_by_role).random(1)
     
-    console.log(randomMembersArray.map(member => member.user.username).join(', '));
-    console.log(randomMembers_confirmed.map(member => member.user.username).join(', '));
+    // console.log(randomMembersArray.map(member => member.user.username).join(', '));
+    // console.log(randomMembers_confirmed.map(member => member.user.username).join(', '));
 
     const suspects = shuffle([...randomMembersArray, ...randomMembers_confirmed, author])
 
@@ -55,8 +55,8 @@ module.exports.execute = async (interaction) => {
         .setTitle(`${target.username} has been stabbed!!`)
         .setDescription("Quick, vote out the imposter!")
         .setFooter({text: '(Only your first vote counts)'})
-        .setThumbnail('')
-        .setColor(colors.purple)
+        .setImage(`attachment://venting_imposter.png`)
+        .setColor(colors.purple);
 
     const suspectsOptionsRow = new ActionRowBuilder()
         .addComponents(
@@ -81,20 +81,31 @@ module.exports.execute = async (interaction) => {
     await interaction.reply({content:"shh I won't tell", ephemeral:true})
     await interaction.channel.send({
         embeds: [embd],
-        components: [suspectsOptionsRow]
+        components: [suspectsOptionsRow],
+        files: [{
+            attachment: `./assets/stab/venting_imposter.png`,
+            name: `venting_imposter.png`
+        }]
     });
 
-    const interaction_filter = (i) => ((i.customId.match(/stab_/)) && i.user.id !== target.id);
-    const collector = interaction.channel.createMessageComponentCollector({ filter: interaction_filter, componentType: ComponentType.Button, time: 2*60*1000});
+    const interaction_filter = (i) => (i.customId.match(/stab_/));
+    const collector = interaction.channel.createMessageComponentCollector({ filter: interaction_filter, componentType: ComponentType.Button, time: 0.2*60*1000});
     
     collector.on('collect', i => {
-        i.reply({content: `You voted for ${i.setLabel}`})
+        if (i.user.id === target.id) return i.reply({content: `You can't vote! You're a ghost.`, ephemeral:true})
+        i.reply({content: `You voted for ${i.component.label}.`, ephemeral:true})
     });
 
     collector.on('end', collected => {
-        console.log(collected.map(i => `${i.user.username} pressed ${i.customId}`).join(', '))
+        console.log(collected);
+        collected = collected.filter(i => i.user.id !== target.id)
+        InteractionMap = new Map()
+        for (i in collected) {
+            if (InteractionMap.has(i.user.username)) continue
+            InteractionMap.set(i.user.username, i.component.label)
+        }
+        console.log([...InteractionMap].map((username, vote) => `${username} voted against ${vote}`).join('\n'))
     });
-
 }
 
 function shuffle(array) {
