@@ -13,7 +13,7 @@ module.exports.data = new SlashCommandBuilder()
 //Need to pull users from Admin, Moderator, and Confirmed roles to use as suspects PREDOMINANTLY. Pull two users at RANDOM from the
 //server, confirmed or not.
 
-// Replys with ephemeral confirmation message.
+// Replies with ephemeral confirmation message.
 // Then sends a seperate message in the chat (interaction.channel.send) with the stabbing/
 // Add buttons (or context menus) for 
 
@@ -55,6 +55,7 @@ module.exports.execute = async (interaction) => {
         .setTitle(`${target.username} has been stabbed!!`)
         .setDescription("Quick, vote out the imposter!")
         .setFooter({text: '(Only your first vote counts)'})
+        .setThumbnail('')
         .setColor(colors.purple)
 
     const suspectsOptionsRow = new ActionRowBuilder()
