@@ -12,7 +12,6 @@ module.exports = {
 module.exports.execute = async (client) => {
     // Grab all the command files from the commands directory you created earlier
     const commandFiles = fs.readdirSync('./commands_ws/').filter(file => file.endsWith('.js'));
-
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     commandsJSON = []
     for (const file of commandFiles) {

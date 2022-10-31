@@ -79,6 +79,7 @@ function command_handler(client, message) {
 }
 
 function audit(message) {
+    if (!message.content) return
     /* Sends an embed of messages to the audit log channel for moderation purposes */
     if (![ids.announcementChannelID, ids.managerChannelID, ids.auditLogChannelID, ids.developerChannelID].includes(message.channel.id)) {
         auditEmbed = new EmbedBuilder()
