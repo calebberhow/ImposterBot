@@ -1,5 +1,5 @@
 const ids = require('../ids_manager');
-const fetch = require('node-fetch')
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const spamSettings = {
     /* Settings that are used for the discord AntiSpam module in message.js ../events/message.js */
