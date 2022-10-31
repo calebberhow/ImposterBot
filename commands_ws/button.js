@@ -9,9 +9,9 @@ module.exports.execute = async (interaction) => {
     const row = new ActionRowBuilder()
         .addComponents(
             new ButtonBuilder()
-					.setCustomId('primary')
-					.setLabel('Click me!')
-					.setStyle(ButtonStyle.Primary),
+                .setCustomId('primary')
+                .setLabel('Click me!')
+                .setStyle(ButtonStyle.Primary),
         );
     const embed = new EmbedBuilder()
         .setColor(0x0099FF)
