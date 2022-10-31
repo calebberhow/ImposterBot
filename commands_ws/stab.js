@@ -9,7 +9,7 @@ module.exports.data = new SlashCommandBuilder()
         .setRequired(true));
 
 
-// Replys with ephemeral confirmation message.
+// Replies with ephemeral confirmation message.
 // Then sends a seperate message in the chat (interaction.channel.send) with the stabbing/
 // Add buttons (or context menus) for 
 module.exports.execute = async (interaction) => {
