@@ -13,9 +13,6 @@ import ghostConstructor from '../util/ghost.js';
 
 var ghost = ghostConstructor();
 
-// Moderate Reglist below for moderation action purposes.
-// 1: f** abb. slur 2: dy** 3: f***ot slur 4: kys 5: kill yourself 6: re**** 7: re****ed 8: n****r slur 9: n***a abb. slur 10: who** slur
-
 let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
 
