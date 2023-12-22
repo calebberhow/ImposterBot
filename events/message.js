@@ -6,11 +6,13 @@ Next, commands are processed. If the message is a command, this command is execu
 If the message is not a command, it is moderated and appropriately responded to.
 */
 
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const lib = require('../util/lib.js');
-const ghost = require('../util/ghost.js')()
-const AntiSpam = require('discord-anti-spam');
+import Discord from 'discord.js';
+import ids from '../ids_manager.js';
+import lib from '../util/lib.js';
+import ghostConstructor from '../util/ghost.js';
+import AntiSpam from 'discord-anti-spam';
+
+var ghost = ghostConstructor();
 
 // Moderate Reglist below for moderation action purposes.
 // 1: f** abb. slur 2: dy** 3: f***ot slur 4: kys 5: kill yourself 6: re**** 7: re****ed 8: n****r slur 9: n***a abb. slur 10: who** slur
@@ -19,7 +21,7 @@ let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
 const antiSpam = new AntiSpam(lib.spamSettings);
 
-module.exports = (client, message) => {
+export default (client, message) => {
     if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
     antiSpam.message(message).catch(err => console.log(err));
 
@@ -264,5 +266,4 @@ function respond_to_message(message, client) {
 }
 
 // Export functions for unit tests
-module.exports.scramble = scramble
-module.exports.lettersToNum = lettersToNum
+export { scramble, lettersToNum }

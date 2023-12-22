@@ -212,4 +212,5 @@ class Character {
         this.lastMove = `${this.type} used ${this.ability} on opponent's ${target.type}. ${supereffective? 'It was super effective!': ''}\nThe opponent will now take ${damage} damage every turn for ${turns} turns.`;
     }
 }
-module.exports = { Character }
+
+export default Character;

@@ -1,8 +1,8 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const colors = require('../util/colors.js');
+import discord from 'discord.js';
+import ids from '../ids_manager.js'
+import colors from '../util/colors.js'
 
-module.exports = (client, member) => {
+export default (client, member) => {
   // give newcomers members role
   if (member.guild.id !== ids.cozycosmos) return;
   const memberRole = member.guild.roles.cache.find(role => role.name === "Members");
@@ -10,7 +10,7 @@ module.exports = (client, member) => {
   
   // send welcome message
   const channel = client.channels.cache.get(ids.welcomeChannelID);
-  let embd = new Discord.MessageEmbed()
+  let embd = new discord.MessageEmbed()
     .setDescription(`**${member.user.username}** has joined!`)
     .setAuthor("𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝚝𝚘 𝙲𝚘𝚣𝚢 𝙲𝚘𝚜𝚖𝚘𝚜!",member.user.displayAvatarURL())
     .setColor(colors.royalblue)

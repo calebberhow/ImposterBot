@@ -1,6 +1,6 @@
-const ids = require('../ids_manager');
+import ids from '../ids_manager.js';
 
-module.exports = (client, member) => {
+export default (client, member) => {
   if (member.guild.id !== ids.cozycosmos) return;
   welcomeChannel = client.channels.cache.get(ids.welcomeChannelID);
   welcomeChannel.send(`> Goodbye, ${member.user.username}! ${client.emojis.cache.get(ids.cyaEmoteID)}`);

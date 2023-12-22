@@ -1,5 +1,5 @@
-Discord = require('discord.js');
-ids = require('../ids_manager');
+import Discord from 'discord.js';
+import ids from '../ids_manager.js';
 
 const spamSettings = {
     /* Settings that are used for the discord AntiSpam module in message.js ../events/message.js */
@@ -29,12 +29,12 @@ function randMessage(messagelist, test=false) {
             messagelist[index] = [message, 1]; // attach a base weight of 1.
         }
     }
-    sum = 0
+    var sum = 0
     messagelist.forEach(message => { sum += message[1] });
-    rand = Math.random()
-    condlist = new Array(messagelist.length + 1);
+    var rand = Math.random()
+    var condlist = new Array(messagelist.length + 1);
     condlist[0] = 0
-    for (i = 0; i < messagelist.length; i++) {
+    for (var i = 0; i < messagelist.length; i++) {
         condlist[i + 1] = condlist[i] + messagelist[i][1] / sum
     }
     for (i = condlist.length; i >= 0; i--) {
@@ -84,26 +84,4 @@ function moderate(message, test=false) {
     return false
 }
 
-async function say(client, interaction, content) {
-	return client.api
-		.interactions(interaction.id, interaction.token)
-		.callback.post({
-			data: {
-				type: 4,
-				data: await createAPIMessage(client, interaction, content),
-			},
-		});
-}
-
-async function createAPIMessage(client, interaction, content) {
-	const apiMessage = await Discord.APIMessage.create(
-		client.channels.resolve(interaction.channel_id),
-		content,
-	)
-		.resolveData()
-		.resolveFiles();
-	return { ...apiMessage.data, files: apiMessage.files };
-}
-
-
-module.exports = { moderate, spamSettings, randMessage, isModerator, say, createAPIMessage }
+export default { moderate, spamSettings, randMessage, isModerator }

@@ -1,27 +1,11 @@
-const keepAlive = require('../server');
-const lib = require('../util/lib.js');
-const requireAll = require('require-all');
-const path = require('path');
+import keepAlive from '../server.js';
+import lib from '../util/lib.js';
+import reload from '../ApplicationCommands/Infrastructure/reload_commands.js';
 
-module.exports = async (client) => {
+export default async (client) => {
 
   // Must be here because client.user.id does NOT exist until the bot is logged in.
-  const ws_commands = requireAll({
-    dirname: path.join(__dirname, '../commands_ws'),
-    filter: /^(?!-)(.+)(?<!.test)\.js$/
-  });
-
-  for (const name in ws_commands) {
-      const cmd = ws_commands[name];
-
-      await client.api.applications(client.user.id).guilds(ids.serverID).commands.post({
-          data: {
-              name: cmd.name,
-              description: cmd.description,
-              options: cmd.options,
-          },
-    });
-  }
+  reload(client);
 
   keepAlive();
   console.log(`Logged in as ${client.user.tag}!`);

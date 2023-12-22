@@ -17,25 +17,30 @@ Ideas:
 - Moves have a particular typing, and each Class is weak to a set of types
 */
 
-const Discord = require('discord.js');
-const colors = require('../util/colors.js');
-const requireAll = require('require-all');
-const path = require('path');
-const fs = require('fs');
+import Discord from 'discord.js';
+import colors from '../util/colors.js';
+import requireAll from 'require-all';
+import path from 'path';
+import fs from 'fs';
+
+import Archer from '../ambushCharacters/archer.js';
 
 // Loads Character Classes
 const classes = {};
-const files = requireAll({
-    dirname: path.join(__dirname, '../ambushCharacters'),
-    filter: /^(?![_-]).+\.js$/ // Gets all .js files in ambushCharacters dir that don't start with _ or -
-});
+
+const files = {Archer: Archer}
+
+// const files = requireAll({
+//     dirname: path.resolve('./ambushCharacters'),
+//     filter: /^(?![_-]).+\.js$/ // Gets all .js files in ambushCharacters dir that don't start with _ or -
+// });
 for (const name in files) {
     classes[name.slice(0,name.length-3)] = files[name]; 
 } 
 
 // Assign emojis
 
-module.exports.run = async (client, message, args) => {
+async function run(client, message, args) {
     const health = client.emojis.cache.get(ids.health);
     const curse = client.emojis.cache.get("816760830754029658")
     const sword = client.emojis.cache.get(ids.sword);
@@ -249,7 +254,9 @@ module.exports.run = async (client, message, args) => {
   }
 }
 
-module.exports.config = {
+const config = {
   name: 'ambush',
   aliases: ["potato"]
 };
+
+export default { run, config}

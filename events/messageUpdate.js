@@ -1,8 +1,8 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const lib = require('../util/lib.js');
+import Discord from 'discord.js';
+import ids from '../ids_manager.js';
+import lib from '../util/lib.js';
 
-module.exports = (client, oldMessage, newMessage) => {
+export default (client, oldMessage, newMessage) => {
     if (newMessage.author.bot) return;
     
     lib.moderate(newMessage);

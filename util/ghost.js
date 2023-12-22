@@ -1,4 +1,4 @@
-module.exports = () => new ghost()
+export default () => new ghost()
 
 function ghost() {
     /*

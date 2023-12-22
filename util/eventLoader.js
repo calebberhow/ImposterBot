@@ -1,17 +1,11 @@
-const requireAll = require('require-all');
-const path = require('path');
+import Events from "../events/Events.js";
 
-module.exports = (client) => {
+export default (client) => {
     client.removeAllListeners();
-    
-    const files_events = requireAll({
-        dirname: path.join(__dirname,'../events'),
-        filter: /^(?!-)(.+)(?<!.test)\.js$/
-    });
 
     var names = [];
-    for (const name in files_events) {
-        const event = files_events[name];
+    for (const name in Events) {
+        const event = Events[name];
         names.push(name);
         client.on(name, event.bind(null,client));
     }
