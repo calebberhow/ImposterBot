@@ -17,7 +17,7 @@ let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
 
 export default (client, message) => {
-    if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
+    if (message.author.bot || message.channel.id == ids.IDs.announcementChannelID) return;
 
     const isCommand = command_handler(client, message);
 
@@ -34,10 +34,10 @@ export default (client, message) => {
         }
 
         // React to messages <-- If this gets more complex, extract to a global function
-        if (message.author.id == ids.cressyID) {
-            if (Math.ceil(Math.random() * 30) == 30 || /\bfurry+\b/i.test(message.content)) message.react(client.emojis.cache.get(ids.doggothinkID));
+        if (message.author.id == ids.IDs.cressyID) {
+            if (Math.ceil(Math.random() * 30) == 30 || /\bfurry+\b/i.test(message.content)) message.react(client.emojis.cache.get(ids.IDs.doggothinkID));
         }
-        else if (Math.ceil(Math.random() * 90) == 90) message.react(lib.randMessage(["❤️", client.emojis.cache.get(ids.doggoheartID)]));
+        else if (Math.ceil(Math.random() * 90) == 90) message.react(lib.randMessage(["❤️", client.emojis.cache.get(ids.IDs.doggoheartID)]));
 
         // Ghost <-- If this gets more complex, extract to a global function with appropriate naming
         var word = ghost.process(message);
@@ -52,9 +52,9 @@ function command_handler(client, message) {
     Checks if the message is a command. If so, run the command. 
     Returns true if the message was a command, otherwise returns false.
     */
-    var [cmd, ...args] = message.content.trim().slice(ids.prefix.length).split(/\s+/g);
+    var [cmd, ...args] = message.content.trim().slice(ids.IDs.prefix.length).split(/\s+/g);
     const command = client.commands.get(cmd.toLowerCase()) || client.commands.get(client.aliases.get(cmd.toLowerCase()));
-    if (message.content.startsWith(ids.prefix) && command) {
+    if (message.content.startsWith(ids.IDs.prefix) && command) {
         if (!communicationsState['operational'] && !command.config.essential) return message.channel.send("Communications are offline!\nUnscramble `" + communicationsState['scramble'] + "` to fix them.")
         else {
             command.run(client, message, args);
@@ -67,13 +67,13 @@ function command_handler(client, message) {
 
 function audit(message) {
     /* Sends an embed of messages to the audit log channel for moderation purposes */
-    if (![ids.announcementChannelID, ids.managerChannelID, ids.auditLogChannelID, ids.developerChannelID].includes(message.channel.id)) {
+    if (![ids.IDs.announcementChannelID, ids.IDs.managerChannelID, ids.IDs.auditLogChannelID, ids.IDs.developerChannelID].includes(message.channel.id)) {
         auditEmbed = new Discord.MessageEmbed()
             .setAuthor(message.author.username, message.author.displayAvatarURL())
             .setTitle(message.channel.name)
             .setDescription(message.content)
             .setTimestamp();
-        message.guild.channels.cache.get(ids.auditLogChannelID).send(auditEmbed);
+        message.guild.channels.cache.get(ids.IDs.auditLogChannelID).send(auditEmbed);
     }
 }
 
@@ -104,7 +104,7 @@ function event_handler(client, message, counter) {
 
 function reactor_event(client, message) {
     /* Handles the creation of the reactor event in the ★reactor★ channel. */
-    reactor = client.channels.cache.get(ids.reactor)
+    reactor = client.channels.cache.get(ids.IDs.reactor)
     reactor.updateOverwrite(message.guild.id, { SEND_MESSAGES: true });
     reactor.send('Reactor repairs needed! There are 2 minutes on the clock. Type `fix` or `repair`')
     reactor.send({files: [{attachment: `./assets/reactor.png`,name: `reactor.png`}]})
@@ -128,7 +128,7 @@ function reactor_event(client, message) {
 
 function oxygen_event(client, message) {
     /* Handles the creation of the oxygen event in the ★oxygen★ channel. */
-    oxygen = client.channels.cache.get(ids.oxygen)
+    oxygen = client.channels.cache.get(ids.IDs.oxygen)
     let code = [];
     for (var i = Math.ceil(Math.random() * 2) + 5; i > 0; i--) {
         code.push(Math.floor(Math.random() * 10));
@@ -223,7 +223,7 @@ function respond_to_message(message, client) {
             message.react("👍");
             break;
         case /\bmeeting\b/i.test(message.content):
-            message.react(ids.reportEmoteID);
+            message.react(ids.IDs.reportEmoteID);
             message.channel.send("**Loud meeting button noise**");
             break;
         case /\bimposterbot\b/i.test(message.content):
@@ -237,11 +237,11 @@ function respond_to_message(message, client) {
             break;
         case /\bvented\b/i.test(message.content):
             message.channel.send(lib.randMessage(["Was it green? I thought I saw them vent.", "I was in storage.. no where near any vents."]));
-            message.react(ids.reportEmoteID);
+            message.react(ids.IDs.reportEmoteID);
             break;
         case /\bsuspicious\b/i.test(message.content):
             message.channel.send("Very sus.");
-            message.channel.send(`${client.emojis.cache.get(ids.cyaEmoteID)}`);
+            message.channel.send(`${client.emojis.cache.get(ids.IDs.cyaEmoteID)}`);
             break;
         case /\bwho you gonna call\b/i.test(message.content):
             message.channel.send("ghost busters!");
@@ -251,9 +251,9 @@ function respond_to_message(message, client) {
             communication_event(message);
             break;
         case /\bpain\b/i.test(message.content):
-            message.react(client.emojis.cache.get(ids.painEmoteID));
+            message.react(client.emojis.cache.get(ids.IDs.painEmoteID));
             break;
-        case (message.content == "<:doggoban:802308677737381948>" && [ids.khazaariID, ids.cressyID].includes(message.author.id)):
+        case (message.content == "<:doggoban:802308677737381948>" && [ids.IDs.khazaariID, ids.IDs.cressyID].includes(message.author.id)):
             message.channel.send("Banning **MoustachioMario#2067**");
             break;
     }
