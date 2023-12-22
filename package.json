@@ -21,7 +21,6 @@
     "colors.js": "^1.2.4",
     "console-read-write": "^0.1.1",
     "directory-import": "^3.1.1",
-    "discord-anti-spam": "^2.5.0",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.1",

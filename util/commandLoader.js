@@ -15,6 +15,4 @@ export default async (client) => {
         for (const a of cmd.config.aliases) client.aliases.set(a, cmd.config.name);
     } 
     console.log(`Commands loaded: ${names.join(', ')}`);
-
-
 };

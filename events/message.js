@@ -10,7 +10,6 @@ import Discord from 'discord.js';
 import ids from '../ids_manager.js';
 import lib from '../util/lib.js';
 import ghostConstructor from '../util/ghost.js';
-import AntiSpam from 'discord-anti-spam';
 
 var ghost = ghostConstructor();
 
@@ -19,11 +18,9 @@ var ghost = ghostConstructor();
 
 let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
-const antiSpam = new AntiSpam(lib.spamSettings);
 
 export default (client, message) => {
     if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
-    antiSpam.message(message).catch(err => console.log(err));
 
     const isCommand = command_handler(client, message);
 
