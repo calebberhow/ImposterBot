@@ -1,15 +1,15 @@
-const Discord = require('discord.js');
+import { EmbedBuilder } from "discord.js"
+import CommandHandler from "./Infrastructure/CommandHandler.js"
 
-module.exports.run = async (client, message, args) => {
-    online = message.guild.members.cache.filter(member => !member.user.bot && member.user.id != message.mentions.members.first().id && member.user.id != message.author.id && (member.presence.status === "online" || member.presence.status == "dnd") && member.roles.cache.has("768586902818258964")).map(m => m.user.id)
+async function run(client, message, args)
+{
+    var online = message.guild.members.cache.filter(member => !member.user.bot && member.user.id != message.mentions.members.first().id && member.user.id != message.author.id && (member.presence.status === "online" || member.presence.status == "dnd") && member.roles.cache.has("768586902818258964")).map(m => m.user.id)
         let letters = ["🇦","🇧","🇨","🇩","🇪","🇫","🇬"]
         let suspects = []
         let add = message.channel.id == "812481897343090718" ? 6 : 4
-        //console.log(message.channel.id == "812481897343090718")
         for (var i = 0; i<add;i++){
             suspects.push(online.splice(Math.floor(Math.random() * online.length), 1))
         }
-        // console.log(suspects)
         suspects.splice(Math.floor(Math.random() * suspects.length), 0, message.author.id)
         message.delete()
         list = ""
@@ -21,7 +21,6 @@ module.exports.run = async (client, message, args) => {
                 msg.react(letters[reaction])
             }
             setTimeout(async function(){
-               // console.log(msg.reactions)
                 const userReactions = msg.reactions.cache.filter(reaction => reaction.users.cache.has(message.author.id));
                 try {
                     for (const reaction of userReactions.values()) {
@@ -42,7 +41,7 @@ module.exports.run = async (client, message, args) => {
                     }
                } catch (err) {}
                //trying to make neater
-               var results = new Discord.MessageEmbed()
+               var results = new EmbedBuilder()
                 if (tie) results.setDescription("Voting was skipped. (Tied)")
                 else results.setDescription("<@" + suspects[majority] + "> was ejected.")
                 if (message.author.id == suspects[majority] && !tie) results.addField("\u200b","0 Imposters Remaining").setColor("22b822")
@@ -53,7 +52,9 @@ module.exports.run = async (client, message, args) => {
         })
 }
 
-module.exports.config = {
+const config = {
   name: 'stab',
   aliases: []
 };
+
+export default new CommandHandler(config.name, config.aliases, run);

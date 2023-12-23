@@ -1,29 +1,36 @@
-const Discord = require('discord.js');
-module.exports.run = async (client, message) => {
+import { EmbedBuilder } from "discord.js";
+import CommandHandler from "./Infrastructure/CommandHandler.js";
+
+const titlereg = /\(title=.*?\)/i;
+const descreg = /\(description=.*?\)/i;
+const colorreg = /\(color=.*?\)/i;
+const urlreg = /\(url=.*?\)/i;
+const namereg = /\(name=.*?\)/i;
+const avatarurlreg = /\(avatarurl=.*?\)/i;
+const thumbnailreg = /\(thumbnail=.*?\)/i;
+const imagereg = /\(image=.*?\)i/;
+const footerreg = /\(footer=.*?\)/i;
+const footerimagereg = /\(footerimage=.*?\)/i;
+const channelreg = /\(channel=.*?\)/i;
+const timestampreg = /\(timestamp=true\)/i;
+
+function setVar(reg) {
+  if (args.match(reg)) 
+  {  
+    match = args.match(reg)
+    matchchars = match[0].split('');
+    return matchchars.slice(reg.toString().length-9, matchchars.length - 1).join('');
+  } 
+  else 
+  {
+    return '';
+  }
+}
+
+async function run(client, message)
+{
   var args = message.content.split('').slice(7).join('');
   var isTimestamp = false;
-  const titlereg = /\(title=.*?\)/i;
-  const descreg = /\(description=.*?\)/i;
-  const colorreg = /\(color=.*?\)/i;
-  const urlreg = /\(url=.*?\)/i;
-  const namereg = /\(name=.*?\)/i;
-  const avatarurlreg = /\(avatarurl=.*?\)/i;
-  const thumbnailreg = /\(thumbnail=.*?\)/i;
-  const imagereg = /\(image=.*?\)i/;
-  const footerreg = /\(footer=.*?\)/i;
-  const footerimagereg = /\(footerimage=.*?\)/i;
-  const channelreg = /\(channel=.*?\)/i;
-  const timestampreg = /\(timestamp=true\)/i;
-
-
-  function setVar(reg) {
-    if (args.match(reg)) {  
-      match = args.match(reg)
-      matchchars = match[0].split('');
-      return matchchars.slice(reg.toString().length-9, matchchars.length - 1).join('');
-    } else return ''
-  }
-  
   
   var channel = setVar(channelreg)
 
@@ -31,15 +38,15 @@ module.exports.run = async (client, message) => {
     isTimestamp = true;
   }
   
-  var embed = new Discord.MessageEmbed()
+  var embed = new EmbedBuilder()
     .setTitle(setVar(titlereg))
     .setURL(setVar(urlreg))
     .setDescription(setVar(descreg))
     .setColor(setVar(colorreg))
-    .setAuthor(setVar(namereg), setVar(avatarurlreg))
+    .setAuthor({name:setVar(namereg), url:setVar(avatarurlreg)})
     .setThumbnail(setVar(thumbnailreg))
     .setImage(setVar(imagereg))
-    .setFooter(setVar(footerreg), setVar(footerimagereg))
+    .setFooter({text: setVar(footerreg), iconURL:setVar(footerimagereg)})
 
   try {
     embed.setAuthor(message.mentions.users.first().username, message.mentions.users.first().displayAvatarURL())
@@ -67,7 +74,9 @@ module.exports.run = async (client, message) => {
   }
 }
 
-module.exports.config = {
+const config = {
   name: 'embed',
   aliases: ['embd']
 };
+
+export default new CommandHandler(config.name, config.aliases, run);

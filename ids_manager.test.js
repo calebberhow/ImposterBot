@@ -1,5 +1,5 @@
-const ids = require('./ids_manager.js')
+import { USAGE } from './ids_manager.js';
 
 test('Check for "cozy" as USAGE', () => {
-    expect(ids.USAGE).toBe("cozy");
+    expect(USAGE).toBe("cozy");
 });

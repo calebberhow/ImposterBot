@@ -1,11 +1,12 @@
-const Discord = require('discord.js');
-const fs = require('fs');
-const dir = './assets/headpat';
-const colors = require('../util/colors.js');
-const lib = require('../util/lib.js');
+import { EmbedBuilder } from 'discord.js';
+import CommandHandler from './Infrastructure/CommandHandler.js';
+import { readdir } from 'fs';
 
-module.exports.run = async (client, message, args) => {
-  fs.readdir(dir, (err, files,) => {
+const dir = '../assets/headpat';
+
+async function run(client, message, args)
+{
+  readdir(dir, (err, files,) => {
     if (message.content.split(' ').length === 2) {
       var random = Math.floor(Math.random() * files.length)+1;
       mention = message.mentions.users.first();
@@ -33,13 +34,13 @@ module.exports.run = async (client, message, args) => {
       else {
         name = mention.username
       }
-      let embd = new Discord.MessageEmbed()
+      let embd = new EmbedBuilder()
         .setTitle((name===message.author.username)? `${message.author.username} headpats themself`:`${message.author.username} headpats ${name}`)
         .setDescription(lib.randMessage(["Headpats!","*pat pat*","You tried!"]))
         .setColor(colors.purple)
         .setImage(`attachment://${random}.gif`)
       message.channel.send({
-        embed: embd,
+        embeds: [embd],
         files: [{
           attachment: `./assets/headpat/${random}.gif`,
           name: `${random}.gif`
@@ -50,7 +51,9 @@ module.exports.run = async (client, message, args) => {
   });
 }
 
-module.exports.config = {
+const config = {
   name: 'headpat',
   aliases: ['headpats', 'pat']
 };
+
+export default new CommandHandler(config.name, config.aliases, run);

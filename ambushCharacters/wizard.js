@@ -1,10 +1,15 @@
-const { Character } = require('./_character.js');
+import {Character, Abilities} from "./Character.js";
+
 class Wizard extends Character {
-  constructor(owner){
-    super(owner, 'Wizard', 80, ['Dark Magic', 'Vital Strike'], ['Spellcast', 'Curse']);
+  constructor(owner)
+  {
+    super(owner, 'Wizard', 80, [Abilities.DarkMagic, Abilities.VitalStrike], [Abilities.Spellcast, Abilities.Curse]);
   }
-  attack(target) {
+
+  attack(target) 
+  {
     this.super_attack([this.spellcast.bind(this, target), this.curse.bind(this, target)], target);
   }
 }
-module.exports = Wizard
+
+export default Wizard

@@ -1,9 +1,9 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const colors = require('../util/colors.js');
+import { EmbedBuilder } from "discord.js";
+import CommandHandler from "./Infrastructure/CommandHandler.js";
 
-module.exports.run = async (client, message, args) => {
-  var embed = new Discord.MessageEmbed()
+async function run(client, message, args)
+{
+  var embed = new EmbedBuilder()
     .setTitle('Here are the commonly played multiplayer games on Cozy Cosmos.')
     .setColor(colors.royalblue)
     .addFields(
@@ -19,8 +19,10 @@ module.exports.run = async (client, message, args) => {
   message.channel.send(embed);
 }
 
-module.exports.config = {
+const config = {
   name: 'games',
   aliases: ['multiplayer', 'party', 'game'],
   essential: true
 };
+
+export default new CommandHandler(config.name, config.aliases, run, config.essential);

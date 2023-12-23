@@ -1,10 +1,13 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const colors = require('../util/colors.js');
+import { EmbedBuilder } from 'discord.js';
+import { IDs } from '../ids_manager.js';
+import colors from '../util/colors.js';
+import CommandHandler from './Infrastructure/CommandHandler.js';
+import coinflip from './coinflip.js';
 
-module.exports.run = async (client, message, args) => {
+async function run(client, message, args)
+{
   var activegames;
-  if(message.guild.id === ids.cozycosmos) activegames = message.guild.channels.cache.get(ids.activegamesChannelID);
+  if(message.guild.id === IDs.cozycosmos) activegames = message.guild.channels.cache.get(IDs.activegamesChannelID);
   else activegames = message.channel;
 
   // Checks to see if !host and 4 arguments have been passed. If so, host game
@@ -27,7 +30,7 @@ module.exports.run = async (client, message, args) => {
 
 function sendSkribbleEmbed (message,link,activegames) {
   if(link.startsWith('https://')) {
-    var embed = new Discord.MessageEmbed()
+    var embed = new EmbedBuilder()
       .setTitle('Skribbl.io')
       .setAuthor(message.author.username, message.author.displayAvatarURL())
       .setDescription(`This is an active Skribbl.io game hosted by ${message.author.username}! Click the embed link to join!`)
@@ -38,7 +41,7 @@ function sendSkribbleEmbed (message,link,activegames) {
     // Sends the embed with game information to the active games channel
     activegames.send(embed);
     // Pings the lobby pings role
-    if(message.guild.id === ids.cozycosmos) activegames.send(`<@&${ids.otherpartygamesRoleID}>`);
+    if(message.guild.id === IDs.cozycosmos) activegames.send(`<@&${IDs.otherpartygamesRoleID}>`);
     message.channel.send('The active games channel has been pinged!');
   }
   else{
@@ -46,8 +49,10 @@ function sendSkribbleEmbed (message,link,activegames) {
   }
 }
 
-module.exports.config = {
+const config = {
   name: 'skribble',
   aliases: [],
   essential: true
 };
+
+export default new CommandHandler(config.name, config.aliases, run, config.essential);

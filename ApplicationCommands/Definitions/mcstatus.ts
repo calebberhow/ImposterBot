@@ -1,7 +1,8 @@
 import mc from "minecraftstatuspinger";
-import Discord from 'discord.js';
+import Discord, { ChatInputCommandInteraction, Client, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import colors from "../../util/colors.js";
 import { ServerStatus } from "minecraftstatuspinger/dist/types.js";
+import ApplicationCommand from "../Infrastructure/ApplicationCommand.js";
 
 const MCServerIP = "cozycosmos.serveminecraft.net";
 const MCServerPort = 25565;
@@ -83,7 +84,6 @@ class Coordinate
 
 const coordinate_store = new CoordinateStore([]);
 
-
 function GetUsernames(response: ServerStatus)
 {
 	if (response.status.players.online ==  0 || response.status.players.sample == undefined)
@@ -129,20 +129,26 @@ async function ServerInfoCommand() : Promise<Discord.InteractionReplyOptions>
 
 async function CoordinatesCommand() : Promise<Discord.InteractionReplyOptions>
 {
+    var coordinates = coordinate_store.Display().join('\n')
+    if (coordinates == '')
+    {
+        coordinates = "Empty...";
+    }
+
 	var embed = new Discord.EmbedBuilder()
 		.setTitle("Minecraft Server Coordinate Repository")
-		.setDescription(coordinate_store.Display().join('\n'));
+		.setDescription(coordinates);
 
 	return { embeds: [embed], ephemeral: true };
 }
 
-async function CoordinatesRecordCommand(args: Discord.CommandInteractionOptionResolver) : Promise<Discord.InteractionReplyOptions>
+async function CoordinatesRecordCommand(interaction: ChatInputCommandInteraction) : Promise<Discord.InteractionReplyOptions>
 {
-	var id: string = args.getString(COORDINATE_DESCRIPTION)
-	var x: number = args.getInteger(COORDINATE_X);
-	var y: number = args.getInteger(COORDINATE_Y);
-	var z: number = args.getInteger(COORDINATE_Z);
-	var dimension: string = args.getString(COORDINATE_DIMENSION);
+	var id: string = interaction.options.getString(COORDINATE_DESCRIPTION)
+	var x: number = interaction.options.getInteger(COORDINATE_X);
+	var y: number = interaction.options.getInteger(COORDINATE_Y);
+	var z: number = interaction.options.getInteger(COORDINATE_Z);
+	var dimension: string = interaction.options.getString(COORDINATE_DIMENSION);
 
 	coordinate_store.AddCoordinate(new Coordinate(id, x, y, z, dimension));
 
@@ -152,13 +158,13 @@ async function CoordinatesRecordCommand(args: Discord.CommandInteractionOptionRe
 	return { embeds: [embed], ephemeral: true };
 }
 
-async function CoordinatesModifyCommand(args: Discord.CommandInteractionOptionResolver ) : Promise<Discord.InteractionReplyOptions>
+async function CoordinatesModifyCommand(interaction: ChatInputCommandInteraction ) : Promise<Discord.InteractionReplyOptions>
 {
-	var id: string = args.getString(COORDINATE_DESCRIPTION)
-	var x: number = args.getInteger(COORDINATE_X);
-	var y: number = args.getInteger(COORDINATE_Y);
-	var z: number = args.getInteger(COORDINATE_Z);
-	var dimension: string = args.getString(COORDINATE_DIMENSION);
+	var id: string = interaction.options.getString(COORDINATE_DESCRIPTION)
+	var x: number = interaction.options.getInteger(COORDINATE_X);
+	var y: number = interaction.options.getInteger(COORDINATE_Y);
+	var z: number = interaction.options.getInteger(COORDINATE_Z);
+	var dimension: string = interaction.options.getString(COORDINATE_DIMENSION);
 
 	coordinate_store.ModifyCoordinate(new Coordinate(id, x, y, z, dimension));
 
@@ -168,24 +174,24 @@ async function CoordinatesModifyCommand(args: Discord.CommandInteractionOptionRe
 	return { embeds: [embed], ephemeral: true };
 }
 
-async function GetReply(args: Discord.CommandInteractionOptionResolver) : Promise<Discord.InteractionReplyOptions>
+async function GetReply(interaction: ChatInputCommandInteraction) : Promise<Discord.InteractionReplyOptions>
 {
-	switch(args.getSubcommand())
+	switch(interaction.options.getSubcommand())
 	{
 		case COMMAND_SERVER:
 			return ServerInfoCommand();
 		case COMMAND_COORDINATES:
 			return CoordinatesCommand();
 		case COMMAND_RECORDCOORDINATE:
-			return CoordinatesRecordCommand(args);
+			return CoordinatesRecordCommand(interaction);
 		case COMMAND_MODIFYCOORDINATE:
-			return CoordinatesModifyCommand(args);
+			return CoordinatesModifyCommand(interaction);
 		default:
 			return { embeds:[new Discord.EmbedBuilder().setTitle("Oops, your request could not be processed...")], ephemeral:true };
 	}
 }
 
-function AddCoordinateOptions(cmd: Discord.SlashCommandSubcommandBuilder)
+function AddCoordinateOptions(cmd: SlashCommandSubcommandBuilder)
 {
 	return cmd.addStringOption(option => option
 		.setName(COORDINATE_DESCRIPTION)
@@ -210,8 +216,7 @@ function AddCoordinateOptions(cmd: Discord.SlashCommandSubcommandBuilder)
 		.setRequired(false))
 }
 
-export default {
-	data: new Discord.SlashCommandBuilder()
+const builder = new SlashCommandBuilder()
 		.setName("mcinfo")
 		.setDescription("Gets information about the minecraft server.")
 		.addSubcommand(cmd => cmd
@@ -228,10 +233,12 @@ export default {
 
 		.addSubcommand(cmd => AddCoordinateOptions(cmd
 			.setName(COMMAND_MODIFYCOORDINATE)
-			.setDescription("Modifies an existing coordinate in the coordinate repository."))),
+			.setDescription("Modifies an existing coordinate in the coordinate repository.")));
 
-	async execute(client: Discord.Client, interaction: Discord.CommandInteraction, args: Discord.CommandInteractionOptionResolver) {
-		var reply = await GetReply(args);
-		interaction.reply(reply);
-	},
-}
+async function execute(client: Client, interaction: ChatInputCommandInteraction) 
+{
+	var reply = await GetReply(interaction);
+	interaction.reply(reply);
+};
+
+export default new ApplicationCommand(builder, execute);

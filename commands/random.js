@@ -1,12 +1,19 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const colors = require('../util/colors.js')
-module.exports.run = async (client, message, args) => {
-    if (message.channel.id != ids.oxygen) return message.channel.send("This command can only be used in <#" + ids.oxygen + ">!")
-    message.channel.send("This command will do something in the future!")
+import { IDs } from "../ids_manager.js";
+import CommandHandler from "./Infrastructure/CommandHandler.js";
+
+async function run(client, message, args)
+{
+    if (message.channel.id != IDs.oxygen) {
+      message.channel.send({text:"This command can only be used in <#" + ids.oxygen + ">!"});
+      return;
+    }
+
+    message.channel.send({text:"This command will do something in the future!"})
 }
 
-module.exports.config = {
+const config = {
   name: 'random',
-  aliases: ['random']
+  aliases: []
 };
+
+export default new CommandHandler(config.name, config.aliases, run);

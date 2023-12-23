@@ -1,9 +1,12 @@
-const Discord = require('discord.js');
-const ids = require('../ids_manager');
-const colors = require('../util/colors.js');
-module.exports.run = async (client, message, args) => {
+import { EmbedBuilder } from 'discord.js';
+import { IDs } from '../ids_manager.js';
+import colors from '../util/colors.js';
+import CommandHandler from './Infrastructure/CommandHandler.js';
+
+async function run(client, message, args)
+{
   var activegames;
-  if(message.guild.id === ids.cozycosmos) activegames = message.guild.channels.cache.get(ids.activegamesChannelID);
+  if(message.guild.id === IDs.cozycosmos) activegames = message.guild.channels.cache.get(IDs.activegamesChannelID);
   else activegames = message.channel;
   // Checks to see if !host and 4 arguments have been passed. If so, host game
   if (message.content.split(' ').length == 5) {
@@ -34,21 +37,23 @@ function sendHostEmbed (message,activegames) {
   mapLocation = splitmsg[1].split('_').join(' ')
   region = splitmsg[2].split('_').join(' ')
   imposters = splitmsg[3]
-  var embed = new Discord.MessageEmbed()
-    .setAuthor(message.author.username, message.author.displayAvatarURL())
+  var embed = new EmbedBuilder()
+    .setAuthor({name: message.author.username, iconURL: message.author.displayAvatarURL()})
     .setDescription(`**Join code: ${code}\nMap: ${mapLocation}\nServer Region: ${region}\nImposter Count: ${imposters}**\n \n(If there is a :x: reaction at the bottom by the host, the game lobby is full. Please do not react unless you are the lobby host.`)
     .setTimestamp(new Date())
     .setThumbnail('https://i.imgur.com/ti8MDoI.png')
     .setColor(colors.purple)
   // Sends the embed with game information to the active games channel
-  activegames.send(embed);
+  activegames.send({embes:[embed]});
   // Pings the lobby pings role
-  if(message.guild.id === ids.cozycosmos) activegames.send(`<@&${ids.lobbypingsRoleID}>`);
+  if(message.guild.id === IDs.cozycosmos) activegames.send(`<@&${IDs.lobbypingsRoleID}>`);
   message.channel.send('The active games channel has been pinged!');
 }
 
-module.exports.config = {
+const config = {
   name: 'host',
   aliases: [],
   essential: true
 };
+
+export default new CommandHandler(config.name, config.aliases, run, config.essential);

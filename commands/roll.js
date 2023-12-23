@@ -1,6 +1,7 @@
-const Discord = require('discord.js');
+import CommandHandler from "./Infrastructure/CommandHandler.js";
 
-module.exports.run = async (client, message, args) => {
+async function run(client, message, args)
+{
     if (args[0] == null) args[0] = "20"
     let split = args[0].split('d');
     let size = split[split.length-1]
@@ -22,7 +23,7 @@ module.exports.run = async (client, message, args) => {
   });
 }
 
-module.exports.config = {
+const config = {
   name: 'roll',
   aliases: ["r"]
 };
@@ -36,3 +37,5 @@ function makeColor(value, max) {
 
     return [redValue, greenValue, 0]
 }
+
+export default new CommandHandler(config.name, config.aliases, run);

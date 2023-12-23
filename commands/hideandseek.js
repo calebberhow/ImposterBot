@@ -1,8 +1,10 @@
-const Discord = require('discord.js');
-const colors = require('../util/colors.js');
+import { EmbedBuilder } from 'discord.js';
+import colors from '../util/colors.js';
+import CommandHandler from './Infrastructure/CommandHandler.js';
 
-module.exports.run = async (client, message, args) => {
-  var embed = new Discord.MessageEmbed()
+async function run(client, message, args)
+{
+  var embed = new EmbedBuilder()
     .setTitle('For a custom (unofficial) game mode in Among Us that you can host on this server!')
     .setDescription(
 `**Rules (for crewmates):**
@@ -23,10 +25,12 @@ Imposter vision: 0.25x
 Taskbar: Keep viewable so imposter can sabotage comms
 Short tasks: 3 (Recommended)`)
     .setColor(colors.royalblue)
-  message.channel.send(embed);
+  message.channel.send({embeds:[embed]});
 }
 
-module.exports.config = {
+const config = {
   name: 'hideandseek',
   aliases: []
 };
+
+export default new CommandHandler(config.name, config.aliases, run);
