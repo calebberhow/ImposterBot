@@ -1,7 +1,7 @@
 import fs from 'fs';
 import lib from '../../util/lib.js';
 import colors from '../../util/colors.js';
-import { ChatInputCommandInteraction, EmbedBuilder, Message, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, InteractionReplyOptions, SlashCommandBuilder } from 'discord.js';
 import ApplicationCommand from '../Infrastructure/ApplicationCommand.js';
 import ServiceClient from '../../ServiceClient.js';
 const dir = './assets/hug';
@@ -13,7 +13,8 @@ async function execute(client: ServiceClient, interaction: ChatInputCommandInter
   });
 }
 
-function GenerateResponse(files: string[], interaction: ChatInputCommandInteraction) {
+function GenerateResponse(files: string[], interaction: ChatInputCommandInteraction): InteractionReplyOptions
+{
     let user = interaction.options.getUser('user');
     let random = Math.floor(Math.random() * files.length) + 1;
     let embd = new EmbedBuilder()

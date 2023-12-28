@@ -9,11 +9,9 @@ import coinflip from "../commands/coinflip.js";
 import embed from "../commands/embed.js";
 import embedhelp from "../commands/embedhelp.js";
 import games from "../commands/games.js";
-import headpat from "../commands/headpat.js";
 import help from "../commands/help.js";
 import hideandseek from "../commands/hideandseek.js";
 import host from "../commands/host.js";
-import hug from "../commands/hug.js";
 import leaderboard from "../commands/leaderboard.js";
 import minecraft from "../commands/minecraft.js";
 import mute from "../commands/mute.js";
@@ -56,11 +54,9 @@ export default new CommandRegistry(
     embed,
     embedhelp,
     games,
-    headpat,
     help,
     hideandseek,
     host,
-    hug,
     leaderboard,
     minecraft,
     mute,
