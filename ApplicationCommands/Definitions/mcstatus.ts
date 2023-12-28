@@ -5,14 +5,11 @@ import CoordinateStore from "../Infrastructure/CoordinateStore.js";
 import Coordinate from "../Infrastructure/Coordinate.js";
 import { ServerStatus } from "minecraftstatuspinger/dist/types.js";
 import { CommandType, ApplicationCommand } from "../Infrastructure/ApplicationCommand.js";
-import Result from "../../util/Result.js";
 import ServiceClient from "../../ServiceClient.js";
 import IDs from "../../ids_manager.js";
 
 const MCServerIP = "cozycosmos.serveminecraft.net";
 const MCServerPort = 25565;
-
-const PageRegex = new RegExp(/Page (\d+)\/\d+/gm);
 
 enum MCStatusArgs
 {
@@ -30,6 +27,24 @@ enum MCStatusArgs
 	CoordinatesPrevPageButtonID = 'coordinates_prev',
 }
 
+async function execute(client: ServiceClient, interaction: ChatInputCommandInteraction): Promise<void>
+{
+	switch(interaction.options.getSubcommand())
+	{
+		case MCStatusArgs.ServerCommand:
+			return SendServerInfo(interaction);
+		case MCStatusArgs.CoordinatesCommand:
+			return SendCoordinatesMessage(client, interaction);
+		case MCStatusArgs.AddCoordinateCommand:
+			return AddCoordinate(client, interaction);
+		case MCStatusArgs.EditCoordinateCommand:
+			return EditCoordinate(client, interaction);
+		default:
+			interaction.reply({ embeds:[new EmbedBuilder().setTitle("Oops, your request could not be processed...")], ephemeral:true });
+			return 
+	}
+};
+
 function GetUsernames(response: ServerStatus)
 {
 	if (response.status.players.online ==  0 || response.status.players.sample == undefined)
@@ -39,7 +54,7 @@ function GetUsernames(response: ServerStatus)
 	return response.status.players.sample.map(x => x.name)
 }
 
-async function ShowServerInfo() : Promise<InteractionReplyOptions>
+async function SendServerInfo(interaction: ChatInputCommandInteraction) : Promise<void>
 {
 	var embed = new EmbedBuilder()
 		.setTitle("Cozy Cosmos Survival Server")
@@ -76,10 +91,10 @@ async function ShowServerInfo() : Promise<InteractionReplyOptions>
 			.setColor(colors.red);
 	}
 
-	return { embeds: [embed], ephemeral: true, components: [button_row] };
+	interaction.reply({ embeds: [embed], ephemeral: true, components: [button_row] });
 }
 
-async function ShowCoordinates(client: ServiceClient, page: number) : Promise<InteractionReplyOptions>
+async function GetCoordinatesMessage(client: ServiceClient, page: number) : Promise<InteractionReplyOptions>
 {
 	const max_page_length = 12;
     var coordinates = await new CoordinateStore(client.Services.Database).GetAll();
@@ -115,8 +130,8 @@ async function ShowCoordinates(client: ServiceClient, page: number) : Promise<In
 	{
 		includeComponents = true;
 		buttons.addComponents(new ButtonBuilder()
-			.setCustomId(MCStatusArgs.CoordinatesNextPageButtonID)
-			.setLabel(">")
+			.setCustomId(MCStatusArgs.CoordinatesPrevPageButtonID)
+			.setLabel("<")
 			.setStyle(ButtonStyle.Secondary));
 	}
 
@@ -124,8 +139,8 @@ async function ShowCoordinates(client: ServiceClient, page: number) : Promise<In
 	{
 		includeComponents = true;
 		buttons.addComponents(new ButtonBuilder()
-			.setCustomId(MCStatusArgs.CoordinatesPrevPageButtonID)
-			.setLabel("<")
+			.setCustomId(MCStatusArgs.CoordinatesNextPageButtonID)
+			.setLabel(">")
 			.setStyle(ButtonStyle.Secondary));
 	}
 
@@ -136,7 +151,40 @@ async function ShowCoordinates(client: ServiceClient, page: number) : Promise<In
 	return { embeds: [embed], ephemeral: true };
 }
 
-async function AddCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction) : Promise<InteractionReplyOptions>
+async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatInputCommandInteraction)
+{
+	let page = 0;
+	let response = await GetCoordinatesMessage(client, page);
+	await interaction.reply(response);
+	if (response.components != null)
+	{
+		client.Services.EventAggregator.Subscribe(MCStatusArgs.CoordinatesNextPageButtonID, async (event) => {
+			let buttonInteraction = event as ButtonInteraction;
+			if (buttonInteraction.message.interaction.id == interaction.id)
+			{
+				page++;
+				UpdateCoordinates(client, buttonInteraction, page);
+			}
+		});
+
+		client.Services.EventAggregator.Subscribe(MCStatusArgs.CoordinatesPrevPageButtonID, async (event) => {
+			let buttonInteraction = event as ButtonInteraction;
+			if (buttonInteraction.message.interaction.id == interaction.id)
+			{
+				page--;
+				UpdateCoordinates(client, buttonInteraction, page);
+			}
+		});
+	}
+}
+
+async function UpdateCoordinates(client:ServiceClient, interaction: ButtonInteraction, page: number)
+{
+	let newMessage = await GetCoordinatesMessage(client, page)
+	interaction.update({ content: newMessage.content, embeds: newMessage.embeds, components: newMessage.components });
+}
+
+async function AddCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction) : Promise<void>
 {
 	var id: string = interaction.options.getString(MCStatusArgs.CoordinateDescription)
 	var x: number = interaction.options.getInteger(MCStatusArgs.CoordinateX);
@@ -160,13 +208,15 @@ async function AddCoordinate(client: ServiceClient, interaction: ChatInputComman
 		var embed = new EmbedBuilder()
 			.setTitle("Created a coordinate :)")
 			.setDescription(`id: ${id}, x: ${x}, y: ${y}, z: ${z}, dimension: ${dimension}`);
-		return { embeds: [embed], ephemeral: true };
+		
+		interaction.reply({ embeds: [embed], ephemeral: true });
+		return;
 	}
 	
-	return { content: "Failed to create coordinate. This coordinate already exists.", ephemeral: true };
+	interaction.reply({ content: "Failed to create coordinate. This coordinate already exists.", ephemeral: true });
 }
 
-async function EditCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction ) : Promise<InteractionReplyOptions>
+async function EditCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction ) : Promise<void>
 {
 	var id: string = interaction.options.getString(MCStatusArgs.CoordinateDescription)
 	var x: number = interaction.options.getInteger(MCStatusArgs.CoordinateX);
@@ -190,27 +240,30 @@ async function EditCoordinate(client: ServiceClient, interaction: ChatInputComma
 		var embed = new EmbedBuilder()
 			.setTitle("Modified a coordinate :)")
 			.setDescription(`id: ${id}, x: ${x}, y: ${y}, z: ${z}, dimension: ${dimension}`);
-		return { embeds: [embed], ephemeral: true };
+		
+		interaction.reply({ embeds: [embed], ephemeral: true });
+		return;
 	}
 
-	return { content: "Failed to modify coordinate. This coordinate does not exist.", ephemeral: true };
+	interaction.reply({ content: "Failed to modify coordinate. This coordinate does not exist.", ephemeral: true });
 }
 
-async function GetReply(client: ServiceClient, interaction: ChatInputCommandInteraction) : Promise<InteractionReplyOptions>
+async function rulesHandler(client: ServiceClient, interaction: ButtonInteraction)
 {
-	switch(interaction.options.getSubcommand())
-	{
-		case MCStatusArgs.ServerCommand:
-			return ShowServerInfo();
-		case MCStatusArgs.CoordinatesCommand:
-			return ShowCoordinates(client, 0);
-		case MCStatusArgs.AddCoordinateCommand:
-			return AddCoordinate(client, interaction);
-		case MCStatusArgs.EditCoordinateCommand:
-			return EditCoordinate(client, interaction);
-		default:
-			return { embeds:[new EmbedBuilder().setTitle("Oops, your request could not be processed...")], ephemeral:true };
-	}
+	let embed = new EmbedBuilder()
+		.setTitle("Minecraft Server Rules")
+		.setDescription("- No exploitation or cheating (x-ray hacking, structure locaters, etc)\n- Don't steal others' things.\n- No griefing.\n- Be friendly.\n- All other server <#760315154864406528> apply");
+	interaction.reply({embeds: [embed], ephemeral: true });
+}
+
+async function nextPage(client: ServiceClient, interaction: ButtonInteraction)
+{
+	client.Services.EventAggregator.Invoke(MCStatusArgs.CoordinatesNextPageButtonID, interaction);
+}
+
+async function prevPage(client: ServiceClient, interaction: ButtonInteraction)
+{
+	client.Services.EventAggregator.Invoke(MCStatusArgs.CoordinatesPrevPageButtonID, interaction);
 }
 
 function AddCoordinateOptions(cmd: SlashCommandSubcommandBuilder) : SlashCommandSubcommandBuilder
@@ -239,86 +292,20 @@ function AddCoordinateOptions(cmd: SlashCommandSubcommandBuilder) : SlashCommand
 }
 
 const builder = new SlashCommandBuilder()
-		.setName("mcinfo")
-		.setDescription("Gets information about the minecraft server.")
-		.addSubcommand(cmd => cmd
-			.setName(MCStatusArgs.ServerCommand)
-			.setDescription("Gets server information"))
-
-		.addSubcommand(cmd => cmd
-			.setName(MCStatusArgs.CoordinatesCommand)
-			.setDescription("Gets coordinate information"))
-
-		.addSubcommand(cmd => AddCoordinateOptions(cmd)
-			.setName(MCStatusArgs.AddCoordinateCommand)
-			.setDescription("Adds a new coordinate to the coordinate repository"))
-
-		.addSubcommand(cmd => AddCoordinateOptions(cmd
-			.setName(MCStatusArgs.EditCoordinateCommand)
-			.setDescription("Modifies an existing coordinate in the coordinate repository.")));
-
-async function execute(client: ServiceClient, interaction: ChatInputCommandInteraction) 
-{
-	var reply = await GetReply(client, interaction);
-	interaction.reply(reply);
-};
-
-async function rulesHandler(client: ServiceClient, interaction: ButtonInteraction)
-{
-	let embed = new EmbedBuilder()
-		.setTitle("Minecraft Server Rules")
-		.setDescription("- No exploitation or cheating (x-ray hacking, structure locaters, etc)\n- Don't steal others' things.\n- No griefing.\n- Be friendly.\n- All other server <#760315154864406528> apply");
-	interaction.reply({embeds: [embed], ephemeral: true });
-}
-
-function getPageNumber(interaction: ButtonInteraction): Result<number>
-{
-	PageRegex.lastIndex = 0
-	let res = PageRegex.exec(interaction.message.embeds[0].footer.text);
-	if (res == null)
-	{
-		return Result.Failed();
-	}
-
-	let pageNum = parseInt(res[1]) - 1;
-
-	if (pageNum == null)
-	{
-		return Result.Failed();
-	}
-
-	return Result.Ok<number>(pageNum);
-}
-
-async function nextPage(client: ServiceClient, interaction: ButtonInteraction)
-{
-	let pageNum = getPageNumber(interaction)
-	if (pageNum.Failed)
-	{
-		await interaction.reply({ content: "Cannot parse page number.", ephemeral: true });
-		return;
-	}
-
-	await UpdateCoordinates(client, interaction, pageNum.Value + 1);
-}
-
-async function prevPage(client: ServiceClient, interaction: ButtonInteraction)
-{
-	let pageNum = getPageNumber(interaction)
-	if (pageNum.Failed)
-	{
-		await interaction.reply({ content: "Cannot parse page number.", ephemeral: true });
-		return;
-	}
-
-	await UpdateCoordinates(client, interaction, pageNum.Value - 1);
-}
-
-async function UpdateCoordinates(client:ServiceClient, interaction: ButtonInteraction, page: number)
-{
-	let newMessage = await ShowCoordinates(client, page)
-	interaction.update({ content: newMessage.content, embeds: newMessage.embeds, components: newMessage.components });
-}
+	.setName("mcinfo")
+	.setDescription("Gets information about the minecraft server.")
+	.addSubcommand(cmd => cmd
+		.setName(MCStatusArgs.ServerCommand)
+		.setDescription("Gets server information"))
+	.addSubcommand(cmd => cmd
+		.setName(MCStatusArgs.CoordinatesCommand)
+		.setDescription("Gets coordinate information"))
+	.addSubcommand(cmd => AddCoordinateOptions(cmd)
+		.setName(MCStatusArgs.AddCoordinateCommand)
+		.setDescription("Adds a new coordinate to the coordinate repository"))
+	.addSubcommand(cmd => AddCoordinateOptions(cmd
+		.setName(MCStatusArgs.EditCoordinateCommand)
+		.setDescription("Modifies an existing coordinate in the coordinate repository.")));
 
 const MCStatus = new ApplicationCommand(builder, execute);
 const MCStatus_Rules = new ApplicationCommand({name: MCStatusArgs.RulesButtonID}, rulesHandler, CommandType.Button);
