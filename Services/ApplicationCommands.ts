@@ -8,6 +8,7 @@ import say2 from '../ApplicationCommands/Definitions/say2.js';
 import { MCStatus,  MCStatus_NextPage,  MCStatus_PrevPage,  MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
 import hug from '../ApplicationCommands/Definitions/hug.js';
 import headpat from '../ApplicationCommands/Definitions/headpat.js';
+import slap from '../ApplicationCommands/Definitions/slap.js';
 
 class ApplicationCommandList
 {
@@ -61,5 +62,5 @@ enum PublishType {
     PublicOnly,
 }
 
-export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat);
+export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap);
 export { ApplicationCommandList, PublishType }

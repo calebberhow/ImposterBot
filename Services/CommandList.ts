@@ -19,7 +19,6 @@ import random from "../commands/random.js";
 import rickroll from "../commands/rickroll.js";
 import roll from "../commands/roll.js";
 import skribble from "../commands/skribble.js";
-import slap from "../commands/slap.js";
 import stab from "../commands/stab.js";
 import unmute from "../commands/unmute.js";
 
@@ -64,7 +63,6 @@ export default new CommandRegistry(
     rickroll,
     roll,
     skribble,
-    slap,
     stab,
     unmute);
 
