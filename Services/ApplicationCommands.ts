@@ -3,8 +3,6 @@ import { Client, REST, Routes } from 'discord.js';
 
 import { ApplicationCommand, CommandType } from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
 import IDs from '../ids_manager.js';
-import say from '../ApplicationCommands/Definitions/say.js';
-import say2 from '../ApplicationCommands/Definitions/say2.js';
 import { MCStatus,  MCStatus_NextPage,  MCStatus_PrevPage,  MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
 import hug from '../ApplicationCommands/Definitions/hug.js';
 import headpat from '../ApplicationCommands/Definitions/headpat.js';
@@ -63,5 +61,5 @@ enum PublishType {
     PublicOnly,
 }
 
-export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab);
+export default new ApplicationCommandList(MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab);
 export { ApplicationCommandList, PublishType }
