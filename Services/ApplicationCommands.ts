@@ -1,12 +1,12 @@
 import chalk from 'chalk'
-import ApplicationCommand from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
+import { ApplicationCommand, CommandType } from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
 
 import { Client, REST, Routes } from 'discord.js';
 import IDs from '../ids_manager.js';
 
 import say from '../ApplicationCommands/Definitions/say.js';
 import say2 from '../ApplicationCommands/Definitions/say2.js';
-import mcstatus from '../ApplicationCommands/Definitions/mcstatus.js';
+import { MCStatus,  MCStatus_NextPage,  MCStatus_PrevPage,  MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
 
 class ApplicationCommandList
 {
@@ -45,12 +45,13 @@ class ApplicationCommandList
                 throw new Error("Invalid Publish Type");
         }
         
-        console.log(chalk.green(`Published ${chalk.gray(this.Values.length)} Application (/) Commands: ${this.Values.map(x => chalk.yellow(x.data.name)).join(", ")}`));
+        const commands = this.Values.filter(x => x.type == CommandType.SlashCommand);
+        console.log(chalk.green(`Published ${chalk.gray(commands.length)} Application (/) Commands: ${commands.map(x => chalk.yellow(x.data.name)).join(", ")}`));
     }
 
     private getFormBody()
     {
-        return this.Values.map(x => x.data);
+        return this.Values.filter(x => x.type == CommandType.SlashCommand).map(x => x.data);
     }
 }
 
@@ -59,5 +60,5 @@ enum PublishType {
     PublicOnly,
 }
 
-export default new ApplicationCommandList(say, say2, mcstatus);
+export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage);
 export { ApplicationCommandList, PublishType }

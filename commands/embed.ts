@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { Colors, EmbedBuilder, HexColorString } from "discord.js";
 import CommandHandler from "./Infrastructure/CommandHandler.js";
 
 const titlereg = /\(title=.*?\)/i;
@@ -14,11 +14,11 @@ const footerimagereg = /\(footerimage=.*?\)/i;
 const channelreg = /\(channel=.*?\)/i;
 const timestampreg = /\(timestamp=true\)/i;
 
-function setVar(reg) {
+function setVar(reg: RegExp, args: string) {
   if (args.match(reg)) 
   {  
-    match = args.match(reg)
-    matchchars = match[0].split('');
+    let match = args.match(reg)
+    let matchchars = match[0].split('');
     return matchchars.slice(reg.toString().length-9, matchchars.length - 1).join('');
   } 
   else 
@@ -29,30 +29,31 @@ function setVar(reg) {
 
 async function run(client, message)
 {
-  var args = message.content.split('').slice(7).join('');
+  var args: string = message.content.split('').slice(7).join('');
   var isTimestamp = false;
   
-  var channel = setVar(channelreg)
+  var channel = setVar(channelreg, args)
 
   if (args.match(timestampreg)) {
     isTimestamp = true;
   }
   
+
   var embed = new EmbedBuilder()
-    .setTitle(setVar(titlereg))
-    .setURL(setVar(urlreg))
-    .setDescription(setVar(descreg))
-    .setColor(setVar(colorreg))
-    .setAuthor({name:setVar(namereg), url:setVar(avatarurlreg)})
-    .setThumbnail(setVar(thumbnailreg))
-    .setImage(setVar(imagereg))
-    .setFooter({text: setVar(footerreg), iconURL:setVar(footerimagereg)})
+    .setTitle(setVar(titlereg, args))
+    .setURL(setVar(urlreg, args))
+    .setDescription(setVar(descreg, args))
+    .setColor(setVar(colorreg, args) as HexColorString)
+    .setAuthor({name:setVar(namereg, args), url:setVar(avatarurlreg, args)})
+    .setThumbnail(setVar(thumbnailreg, args))
+    .setImage(setVar(imagereg, args))
+    .setFooter({text: setVar(footerreg, args), iconURL:setVar(footerimagereg, args)})
 
   try {
-    embed.setAuthor(message.mentions.users.first().username, message.mentions.users.first().displayAvatarURL())
+    embed.setAuthor({ name: message.mentions.users.first().username, iconURL: message.mentions.users.first().displayAvatarURL()})
   }
   catch {
-    embed.setAuthor(setVar(namereg))
+    //embed.setAuthor(setVar(namereg, args))
   }
 
   if (isTimestamp) {
