@@ -6,6 +6,7 @@ import IDs from '../ids_manager.js';
 import say from '../ApplicationCommands/Definitions/say.js';
 import say2 from '../ApplicationCommands/Definitions/say2.js';
 import { MCStatus,  MCStatus_NextPage,  MCStatus_PrevPage,  MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
+import hug from '../ApplicationCommands/Definitions/hug.js';
 
 class ApplicationCommandList
 {
@@ -59,5 +60,5 @@ enum PublishType {
     PublicOnly,
 }
 
-export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage);
+export default new ApplicationCommandList(say, say2, MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug);
 export { ApplicationCommandList, PublishType }
