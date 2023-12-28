@@ -38,7 +38,7 @@ class EventAggregator
     Subscribe(type: string, callback: ListenerCallback): EventCollectorListenerID;
     Subscribe(listener: EventListener): EventCollectorListenerID;
 
-    Subscribe(...args): EventCollectorListenerID
+    Subscribe(...args: Array<unknown>): EventCollectorListenerID
     {
         // Handle parsing arguments due to overloads
         var type: string, callback: ListenerCallback;

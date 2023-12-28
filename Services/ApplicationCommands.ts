@@ -1,9 +1,8 @@
 import chalk from 'chalk'
-import { ApplicationCommand, CommandType } from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
-
 import { Client, REST, Routes } from 'discord.js';
-import IDs from '../ids_manager.js';
 
+import { ApplicationCommand, CommandType } from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
+import IDs from '../ids_manager.js';
 import say from '../ApplicationCommands/Definitions/say.js';
 import say2 from '../ApplicationCommands/Definitions/say2.js';
 import { MCStatus,  MCStatus_NextPage,  MCStatus_PrevPage,  MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';

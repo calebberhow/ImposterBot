@@ -6,7 +6,7 @@ Next, commands are processed. If the message is a command, this command is execu
 If the message is not a command, it is moderated and appropriately responded to.
 */
 
-import Discord, { Events, TextChannel } from 'discord.js';
+import { EmbedBuilder, Events, Message, TextChannel } from 'discord.js';
 import ids from '../ids_manager.js';
 import lib from '../util/lib.js';
 import ghostConstructor from '../util/ghost.js';
@@ -19,7 +19,7 @@ var ghost = ghostConstructor();
 let counter = Math.floor(Math.random() * 10) + 10;
 var communicationsState = {"operational": true,"scramble": null}
 
-async function OnMessage(client: ServiceClient, message: Discord.Message)
+async function OnMessage(client: ServiceClient, message: Message)
 {
     if (message.author.bot || message.channel.id == ids.announcementChannelID) return;
     const isCommand = command_handler(client, message);
@@ -56,7 +56,7 @@ async function OnMessage(client: ServiceClient, message: Discord.Message)
     }
 }
 
-function command_handler(client: ServiceClient, message: Discord.Message): boolean {
+function command_handler(client: ServiceClient, message: Message): boolean {
     /* 
     Checks if the message is a command. If so, run the command. 
     Returns true if the message was a command, otherwise returns false.
@@ -80,11 +80,11 @@ function command_handler(client: ServiceClient, message: Discord.Message): boole
     return false
 }
 
-function audit(message: Discord.Message) {
+function audit(message: Message) {
     /* Sends an embed of messages to the audit log channel for moderation purposes */
     if (![ids.announcementChannelID, ids.managerChannelID, ids.auditLogChannelID, ids.developerChannelID].includes(message.channel.id)) {
         message.channel
-        var auditEmbed = new Discord.EmbedBuilder()
+        var auditEmbed = new EmbedBuilder()
             .setAuthor({name:message.author.username, iconURL:message.author.displayAvatarURL()})
             .setTitle((message.channel as TextChannel).name)
             .setDescription(message.content.length > 0 ? message.content : "null")
@@ -93,7 +93,7 @@ function audit(message: Discord.Message) {
     }
 }
 
-function event_handler(client: Discord.Client, message: Discord.Message, counter: number) {
+function event_handler(client: ServiceClient, message: Message, counter: number) {
     /* Processes random events that rely on the message counter. Sends random messages and causes random events. Resets the counter when done. */
     if (--counter == 0) {
         counter = Math.floor(Math.random() * 15) + 15;
@@ -118,7 +118,7 @@ function event_handler(client: Discord.Client, message: Discord.Message, counter
     }
 }
 
-function reactor_event(client: Discord.Client, message: Discord.Message) {
+function reactor_event(client: ServiceClient, message: Message) {
     /* Handles the creation of the reactor event in the ★reactor★ channel. */
     var reactor = client.channels.cache.get(ids.reactor) as TextChannel;
     reactor.permissionOverwrites.edit(message.guild.id, {  SendMessages: true });
@@ -142,7 +142,7 @@ function reactor_event(client: Discord.Client, message: Discord.Message) {
     });
 }
 
-function oxygen_event(client: Discord.Client, message: Discord.Message) {
+function oxygen_event(client: ServiceClient, message: Message) {
     /* Handles the creation of the oxygen event in the ★oxygen★ channel. */
     var oxygen = client.channels.cache.get(ids.oxygen) as TextChannel;
     let code = [];
@@ -169,7 +169,7 @@ function lettersToNum(phrase: string) {
     return phrase.trim().split(' ').map(word => lettersDictionary[word]).reduce((prev, cur) => prev + cur);
 }
 
-function communication_event(message: Discord.Message, word: string = null) {
+function communication_event(message: Message, word: string = null) {
     /*
     Handles the creation of communication events. These happen in all channels, and users must unscramble a word to complete the event.
     Note: Communications event prevents non-essential commands from working. Players are reminded to fix comms to fix the bot.
@@ -212,7 +212,7 @@ function scramble(word: string) {
     return scrambled
 }
 
-function respond_to_message(message: Discord.Message, client: Discord.Client) {
+function respond_to_message(message: Message, client: ServiceClient) {
     switch (true) {
         case message.content=='supersecretcommstrigger':
             communication_event(message);

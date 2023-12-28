@@ -1,9 +1,10 @@
-import Discord, { Events } from 'discord.js';
+import { Channel, EmbedBuilder, Events, GuildMember  } from 'discord.js';
 import ids from '../ids_manager.js'
 import colors from '../util/colors.js'
 import EventHandler from './Infrastructure/EventHandler.js';
+import ServiceClient from '../ServiceClient.js';
 
-async function OnGuilMemberAdd(client: Discord.Client, member: Discord.GuildMember)
+async function OnGuilMemberAdd(client: ServiceClient, member: GuildMember)
 {
   // give newcomers members role
   if (member.guild.id !== ids.cozycosmos) {
@@ -13,11 +14,11 @@ async function OnGuilMemberAdd(client: Discord.Client, member: Discord.GuildMemb
   member.roles.add(memberRole).catch(console.error);
   
   // send welcome message
-  const channel: Discord.Channel = client.channels.cache.get(ids.welcomeChannelID);
+  const channel: Channel = client.channels.cache.get(ids.welcomeChannelID);
 
   if (channel.isTextBased())
   {
-    let embd = new Discord.EmbedBuilder()
+    let embd = new EmbedBuilder()
       .setDescription(`**${member.user.username}** has joined!`)
       .setAuthor({name:"𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝚝𝚘 𝙲𝚘𝚣𝚢 𝙲𝚘𝚜𝚖𝚘𝚜!", iconURL:member.user.displayAvatarURL()})
       .setColor(colors.royalblue)
