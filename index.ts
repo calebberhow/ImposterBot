@@ -12,6 +12,7 @@ const client = new ServiceClient(
       GatewayIntentBits.GuildMembers,
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.GuildVoiceStates,
     ]
   });
 

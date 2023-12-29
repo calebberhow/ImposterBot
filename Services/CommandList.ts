@@ -16,7 +16,6 @@ import leaderboard from "../commands/leaderboard.js";
 import minecraft from "../commands/minecraft.js";
 import mute from "../commands/mute.js";
 import random from "../commands/random.js";
-import rickroll from "../commands/rickroll.js";
 import roll from "../commands/roll.js";
 import skribble from "../commands/skribble.js";
 import unmute from "../commands/unmute.js";
@@ -59,7 +58,6 @@ export default new CommandRegistry(
   minecraft,
   mute,
   random,
-  rickroll,
   roll,
   skribble,
   unmute);

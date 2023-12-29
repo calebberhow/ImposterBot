@@ -3,11 +3,12 @@ import { Client, REST, Routes } from 'discord.js';
 
 import { ApplicationCommand, CommandType } from '../ApplicationCommands/Infrastructure/ApplicationCommand.js';
 import IDs from '../ids_manager.js';
-import { MCStatus, MCStatus_NextPage, MCStatus_PrevPage, MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
+import { MCAdmin, MCStatus, MCStatus_NextPage, MCStatus_PrevPage, MCStatus_Rules } from '../ApplicationCommands/Definitions/mcstatus.js';
 import hug from '../ApplicationCommands/Definitions/hug.js';
 import headpat from '../ApplicationCommands/Definitions/headpat.js';
 import slap from '../ApplicationCommands/Definitions/slap.js';
 import stab from '../ApplicationCommands/Definitions/stab.js';
+import rickroll from '../ApplicationCommands/Definitions/rickroll.js';
 
 class ApplicationCommandList
 {
@@ -16,6 +17,16 @@ class ApplicationCommandList
   constructor(...values: Array<ApplicationCommand>)
   {
     this.Values = values;
+
+    let command_names = [];
+    for (let command of values)
+    {
+      if (command_names.includes(command.data.name))
+      {
+        console.log(chalk.redBright(`${chalk.bgRed(chalk.yellowBright("ERROR:"))} App Command ${chalk.yellow(command.data.name)} is registered twice.`));
+      }
+      command_names.push(command.data.name);
+    }
   }
 
   get(commandName: string): ApplicationCommand | null
@@ -64,5 +75,5 @@ enum PublishType
   PublicOnly,
 }
 
-export default new ApplicationCommandList(MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab);
+export default new ApplicationCommandList(MCStatus, MCAdmin, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab, rickroll);
 export { ApplicationCommandList, PublishType };

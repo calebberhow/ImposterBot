@@ -9,6 +9,7 @@ import
   EmbedBuilder,
   Interaction,
   InteractionReplyOptions,
+  PermissionFlagsBits,
   SlashCommandBuilder,
   SlashCommandSubcommandBuilder
 } from 'discord.js';
@@ -56,6 +57,16 @@ async function execute(client: ServiceClient, interaction: ChatInputCommandInter
       return;
   }
 };
+
+async function ClearCoordinates(client: ServiceClient, interaction: ChatInputCommandInteraction): Promise<void>
+{
+  if (await new CoordinateStore(client.Services.Database).Clear(interaction.guildId))
+  {
+    await interaction.reply({ content: "Cleared coordinates successfully." });
+    return;
+  }
+  await interaction.reply({ content: 'Could not clear coordinates.' });
+}
 
 function GetUsernames(response: ServerStatus): string[]
 {
@@ -331,10 +342,16 @@ const builder = new SlashCommandBuilder()
     .setName(MCStatusArgs.EditCoordinateCommand)
     .setDescription("Modifies an existing coordinate in the coordinate repository.")));
 
+const adminCommandBuilder = new SlashCommandBuilder()
+  .setName('clear_mc_coordinates')
+  .setDescription('Clears the minecraft coordinates saved for this server.')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
+
 const MCStatus = new ApplicationCommand(builder, execute);
+const MCAdmin = new ApplicationCommand(adminCommandBuilder, ClearCoordinates);
 const MCStatus_Rules = new ApplicationCommand({ name: MCStatusArgs.RulesButtonID }, rulesHandler, CommandType.Button);
 const MCStatus_NextPage = new ApplicationCommand({ name: MCStatusArgs.CoordinatesNextPageButtonID }, nextPage, CommandType.Button);
 const MCStatus_PrevPage = new ApplicationCommand({ name: MCStatusArgs.CoordinatesPrevPageButtonID }, prevPage, CommandType.Button);
 
 export default MCStatus;
-export { MCStatus, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage };
+export { MCStatus, MCAdmin, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage };
