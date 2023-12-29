@@ -4,7 +4,7 @@ import CommandHandler from './Infrastructure/CommandHandler.js';
 
 async function run(client, message, args)
 {
-  var dbObjects = require('../dbObjects.js')
+  var dbObjects = require('../dbObjects.js');
   var userCollection = dbObjects.userCollection;
   embed = new EmbedBuilder()
     .setTitle('Leaderboard')
@@ -13,8 +13,8 @@ async function run(client, message, args)
       .first(10)
       .map((user, position) => `(${position + 1}) ${(client.users.cache.get(user.user_id).tag)}: ${user.balance} 🪙`)
       .join('\n'))
-    .setColor(colors.slate)
-  message.channel.send({embeds:[embed]});
+    .setColor(colors.slate);
+  message.channel.send({ embeds: [embed] });
 }
 
 const config = {

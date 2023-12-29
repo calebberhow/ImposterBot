@@ -4,26 +4,26 @@ type ApplicationCommandFunction = (client: Client, interaction: ChatInputCommand
 
 interface Name
 {
-    name: string;
+  name: string;
 }
 
 enum CommandType
 {
-    SlashCommand = 0,
-    Button = 1,
+  SlashCommand = 0,
+  Button = 1,
 }
 
 class ApplicationCommand
 {
-    data: Name; // SlashCommandBuilder, but only need to know command name
-    handler: ApplicationCommandFunction;
-    type: CommandType
-    constructor(data: Name, handler: ApplicationCommandFunction, type: CommandType = CommandType.SlashCommand)
-    {
-        this.data = data;
-        this.handler = handler;
-        this.type = type;
-    }
+  data: Name; // SlashCommandBuilder, but only need to know command name
+  handler: ApplicationCommandFunction;
+  type: CommandType;
+  constructor(data: Name, handler: ApplicationCommandFunction, type: CommandType = CommandType.SlashCommand)
+  {
+    this.data = data;
+    this.handler = handler;
+    this.type = type;
+  }
 }
 
 export default ApplicationCommand;

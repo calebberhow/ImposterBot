@@ -1,6 +1,7 @@
-import {Character, Abilities} from "./Character.js";
+import { Character, Abilities } from "./Character.js";
 
-class Wizard extends Character {
+class Wizard extends Character
+{
   constructor(owner)
   {
     super(owner, 'Wizard', 80, [Abilities.DarkMagic, Abilities.VitalStrike], [Abilities.Spellcast, Abilities.Curse]);
@@ -12,4 +13,4 @@ class Wizard extends Character {
   }
 }
 
-export default Wizard
+export default Wizard;

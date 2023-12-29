@@ -5,15 +5,15 @@ import ServiceClient from "./ServiceClient.js";
 import { PublishType } from "./Services/ApplicationCommands.js";
 
 const client = new ServiceClient(
-{
+  {
     intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.DirectMessages,
     ]
-});
+  });
 
 dotenv.config();
 

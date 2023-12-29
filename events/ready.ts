@@ -12,28 +12,30 @@ async function OnReady(client: ServiceClient)
 
   keepAlive();
   client.user.setActivity(getRandomStatus());
-  setInterval(function (){
+  setInterval(function ()
+  {
     client.user.setActivity(getRandomStatus());
   }, 420000);
 }
 
-function getRandomStatus() {
-    return lib.randMessage(
-        [["as imposter",4],
-        ["Among Us",4],
-        ["in the vents",4],
-        ["moderating Cozy Cosmos",2],
-        ["Simon Says in Reactor",2],
-        ["games to avoid tasks",1.5],
-        "with a snowman",
-        "with their pet robot",
-        "Town of Salem", 
-        "Minecraft",
-        "League of Legends",
-        "suspenseful music",
-        ["Pokémon: Shiny Hunting",0.25], 
-        ["Pokémon GO",0.25],
-        ]) + " | !commands";
+function getRandomStatus()
+{
+  return lib.randMessage(
+    [["as imposter", 4],
+    ["Among Us", 4],
+    ["in the vents", 4],
+    ["moderating Cozy Cosmos", 2],
+    ["Simon Says in Reactor", 2],
+    ["games to avoid tasks", 1.5],
+      "with a snowman",
+      "with their pet robot",
+      "Town of Salem",
+      "Minecraft",
+      "League of Legends",
+      "suspenseful music",
+    ["Pokémon: Shiny Hunting", 0.25],
+    ["Pokémon GO", 0.25],
+    ]) + " | !commands";
 }
 
 export default new EventHandler(Events.ClientReady, OnReady);

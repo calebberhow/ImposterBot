@@ -6,4 +6,4 @@ const royalblue = 0x000082;
 const red = 0xA20000;
 const lime = 0x00C100;
 
-export default { orange, purple, green, slate, royalblue, red, lime }
+export default { orange, purple, green, slate, royalblue, red, lime };

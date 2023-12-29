@@ -1,4 +1,4 @@
-import { Client, Events, GuildMember } from 'discord.js'
+import { Client, Events, GuildMember } from 'discord.js';
 import ids from '../ids_manager.js';
 import EventHandler from './Infrastructure/EventHandler.js';
 

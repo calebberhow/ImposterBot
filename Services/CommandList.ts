@@ -23,45 +23,45 @@ import unmute from "../commands/unmute.js";
 
 class CommandRegistry 
 {
-    commands:Array<CommandHandler>;
-    constructor(...commands:Array<CommandHandler>) 
-    {
-        console.log(chalk.green(`Loaded ${chalk.gray(commands.length)} chat commands: ${commands.map(x => chalk.yellow(x.commandName)).join(", ")}`));
-        this.commands = commands;
-    }
+  commands: Array<CommandHandler>;
+  constructor(...commands: Array<CommandHandler>) 
+  {
+    console.log(chalk.green(`Loaded ${chalk.gray(commands.length)} chat commands: ${commands.map(x => chalk.yellow(x.commandName)).join(", ")}`));
+    this.commands = commands;
+  }
 
-    get(commandName:string): CommandHandler | null
+  get(commandName: string): CommandHandler | null
+  {
+    for (const command of this.commands)
     {
-        for (const command of this.commands)
-        {
-            if (command.commandName == commandName || command.commandAliases.includes(commandName)) 
-            {
-                return command;
-            }
-        }
-        return null;
+      if (command.commandName == commandName || command.commandAliases.includes(commandName)) 
+      {
+        return command;
+      }
     }
+    return null;
+  }
 }
 
 export default new CommandRegistry(
-    ambush,
-    ambushwiki,
-    blackjack,
-    bored,
-    coinflip,
-    embed,
-    embedhelp,
-    games,
-    help,
-    hideandseek,
-    host,
-    leaderboard,
-    minecraft,
-    mute,
-    random,
-    rickroll,
-    roll,
-    skribble,
-    unmute);
+  ambush,
+  ambushwiki,
+  blackjack,
+  bored,
+  coinflip,
+  embed,
+  embedhelp,
+  games,
+  help,
+  hideandseek,
+  host,
+  leaderboard,
+  minecraft,
+  mute,
+  random,
+  rickroll,
+  roll,
+  skribble,
+  unmute);
 
 export { CommandRegistry };

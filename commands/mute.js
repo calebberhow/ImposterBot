@@ -8,14 +8,15 @@ import CommandHandler from './Infrastructure/CommandHandler.js';
 
 async function run(client, message, args)
 {
-    if(lib.isModerator(message.member)) {
-        if (message.mentions.users.first() == null) return message.react("❓")
-    const user = message.guild.member(message.mentions.users.first())
+  if (lib.isModerator(message.member))
+  {
+    if (message.mentions.users.first() == null) return message.react("❓");
+    const user = message.guild.member(message.mentions.users.first());
     var role = user.guild.roles.cache.find(role => role.name === "Temp-mute");
     user.roles.add(role);
-    return message.react("✅")
+    return message.react("✅");
   }
-  message.react("❌")
+  message.react("❌");
 }
 
 const config = {

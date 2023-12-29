@@ -4,7 +4,7 @@ import CommandHandler from "./Infrastructure/CommandHandler.js";
 async function run(client, message, args)
 {
   message.channel.send(
-  `**Function**
+    `**Function**
   Allows a user to easily make an embed with vast customizability. After embed is sent, the user's command gets deleted.
 
   **Arguments** (All arguments are optional)
@@ -33,17 +33,17 @@ async function run(client, message, args)
   embed = new Discord.MessageEmbed()
     .setTitle('Title')
     .setDescription('Description')
-    .setFooter('Footer','https://i.imgur.com/lukpdJb.jpeg')
-    .setAuthor('AuthorName','https://i.imgur.com/lukpdJb.jpeg')
+    .setFooter('Footer', 'https://i.imgur.com/lukpdJb.jpeg')
+    .setAuthor('AuthorName', 'https://i.imgur.com/lukpdJb.jpeg')
     .setImage('https://i.imgur.com/lukpdJb.jpeg')
     .setThumbnail('https://i.imgur.com/lukpdJb.jpeg');
 
-  message.channel.send({embeds:[embed]});
+  message.channel.send({ embeds: [embed] });
 }
 
 const config = {
   name: 'embedhelp',
-  aliases: ['embdhelp','helpembed']
+  aliases: ['embdhelp', 'helpembed']
 };
 
 export default new CommandHandler(config.name, config.aliases, run);

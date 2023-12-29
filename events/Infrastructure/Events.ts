@@ -8,13 +8,13 @@ import ready from '../ready.js';
 import interactionCreate from '../interactionCreate.js';
 import EventHandler from './EventHandler.js';
 
-const EventHandlers: Array<EventHandler<keyof ClientEvents>> = [ 
-    ready,
-    message,
-    messageUpdate,
-    guildMemberAdd,
-    guildMemberRemove,
-    interactionCreate,
-]
+const EventHandlers: Array<EventHandler<keyof ClientEvents>> = [
+  ready,
+  message,
+  messageUpdate,
+  guildMemberAdd,
+  guildMemberRemove,
+  interactionCreate,
+];
 
 export default EventHandlers;

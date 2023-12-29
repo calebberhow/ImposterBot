@@ -14,13 +14,14 @@ const footerimagereg = /\(footerimage=.*?\)/i;
 const channelreg = /\(channel=.*?\)/i;
 const timestampreg = /\(timestamp=true\)/i;
 
-function setVar(reg: RegExp, args: string) {
+function setVar(reg: RegExp, args: string)
+{
   if (args.match(reg)) 
-  {  
-    let match = args.match(reg)
+  {
+    let match = args.match(reg);
     let matchchars = match[0].split('');
-    return matchchars.slice(reg.toString().length-9, matchchars.length - 1).join('');
-  } 
+    return matchchars.slice(reg.toString().length - 9, matchchars.length - 1).join('');
+  }
   else 
   {
     return '';
@@ -31,45 +32,51 @@ async function run(client, message)
 {
   var args: string = message.content.split('').slice(7).join('');
   var isTimestamp = false;
-  
-  var channel = setVar(channelreg, args)
 
-  if (args.match(timestampreg)) {
+  var channel = setVar(channelreg, args);
+
+  if (args.match(timestampreg))
+  {
     isTimestamp = true;
   }
-  
+
 
   var embed = new EmbedBuilder()
     .setTitle(setVar(titlereg, args))
     .setURL(setVar(urlreg, args))
     .setDescription(setVar(descreg, args))
     .setColor(setVar(colorreg, args) as HexColorString)
-    .setAuthor({name:setVar(namereg, args), url:setVar(avatarurlreg, args)})
+    .setAuthor({ name: setVar(namereg, args), url: setVar(avatarurlreg, args) })
     .setThumbnail(setVar(thumbnailreg, args))
     .setImage(setVar(imagereg, args))
-    .setFooter({text: setVar(footerreg, args), iconURL:setVar(footerimagereg, args)})
+    .setFooter({ text: setVar(footerreg, args), iconURL: setVar(footerimagereg, args) });
 
-  try {
-    embed.setAuthor({ name: message.mentions.users.first().username, iconURL: message.mentions.users.first().displayAvatarURL()})
+  try
+  {
+    embed.setAuthor({ name: message.mentions.users.first().username, iconURL: message.mentions.users.first().displayAvatarURL() });
   }
   catch {
     //embed.setAuthor(setVar(namereg, args))
   }
 
-  if (isTimestamp) {
-    embed.setTimestamp(new Date())
+  if (isTimestamp)
+  {
+    embed.setTimestamp(new Date());
   }
 
-  if (channel != '') {
-    try{
+  if (channel != '')
+  {
+    try
+    {
       client.channels.get(channel).send(embed);
       message.delete();
     }
     catch {
-      message.channel.send('Send proper channel ID')
+      message.channel.send('Send proper channel ID');
     }
   }
-  else {
+  else
+  {
     message.channel.send(embed);
     message.delete();
   }

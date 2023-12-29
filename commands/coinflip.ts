@@ -6,11 +6,11 @@ import CommandHandler from './Infrastructure/CommandHandler.js';
 async function run(client: Client, message: Message, args: string[])
 {
   //Coinflip "command"
-  var rand = lib.randMessage(["It's heads.", "It's tails."]).toString()
+  var rand = lib.randMessage(["It's heads.", "It's tails."]).toString();
   var embed = new EmbedBuilder()
     .setTitle('Coin Flip')
     .setDescription(rand)
-    .setColor(colors.slate)
+    .setColor(colors.slate);
 
   message.channel.send({ embeds: [embed] });
 };
