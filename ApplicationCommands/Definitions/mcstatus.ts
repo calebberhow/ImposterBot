@@ -1,5 +1,17 @@
 import mc from "minecraftstatuspinger";
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, Interaction, InteractionReplyOptions, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
+import
+{
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonInteraction,
+  ButtonStyle,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  Interaction,
+  InteractionReplyOptions,
+  SlashCommandBuilder,
+  SlashCommandSubcommandBuilder
+} from 'discord.js';
 import colors from "../../util/colors.js";
 import CoordinateStore from "../Infrastructure/CoordinateStore.js";
 import Coordinate from "../Infrastructure/Coordinate.js";
@@ -40,12 +52,12 @@ async function execute(client: ServiceClient, interaction: ChatInputCommandInter
     case MCStatusArgs.EditCoordinateCommand:
       return EditCoordinate(client, interaction);
     default:
-      interaction.reply({ embeds: [new EmbedBuilder().setTitle("Oops, your request could not be processed...")], ephemeral: true });
+      interaction.reply({ content: "Oops, your request could not be processed...", ephemeral: true });
       return;
   }
 };
 
-function GetUsernames(response: ServerStatus)
+function GetUsernames(response: ServerStatus): string[]
 {
   if (response.status.players.online == 0 || response.status.players.sample == undefined)
   {
@@ -57,13 +69,9 @@ function GetUsernames(response: ServerStatus)
 async function SendServerInfo(interaction: ChatInputCommandInteraction): Promise<void>
 {
   var embed = new EmbedBuilder()
-    .setTitle("Cozy Cosmos Survival Server")
-    .setColor(colors.purple)
-    .addFields([
-      {
-        name: `Server Details`,
-        value: `\`${MCServerIP}\``
-      }]);
+    .setTitle("Cozy Cosmos Minecraft Server")
+    .setColor(colors.purple);
+
   var button_row = new ActionRowBuilder<ButtonBuilder>()
     .addComponents(new ButtonBuilder()
       .setCustomId(MCStatusArgs.RulesButtonID)
@@ -73,6 +81,13 @@ async function SendServerInfo(interaction: ChatInputCommandInteraction): Promise
   try
   {
     var response: ServerStatus = await mc.lookup({ host: MCServerIP, port: MCServerPort, timeout: 1000 });
+    embed
+      .setDescription(response.status.description)
+      .addFields([
+        {
+          name: `Server Details`,
+          value: `Address: \`${MCServerIP}\`\nVersion: \`${response.status.version.name}\``
+        }]);
     if (response.status.players.online > 0)
     {
       embed.addFields({
@@ -160,22 +175,14 @@ async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatIn
   {
     client.Services.EventAggregator.Subscribe(`${MCStatusArgs.CoordinatesNextPageButtonID}_${interaction.id}`, async (event) =>
     {
-      let buttonInteraction = event as ButtonInteraction;
-      if (buttonInteraction.message.interaction.id == interaction.id)
-      {
-        page++;
-        UpdateCoordinates(client, buttonInteraction, page);
-      }
+      page++;
+      UpdateCoordinates(client, event as ButtonInteraction, page);
     });
 
     client.Services.EventAggregator.Subscribe(`${MCStatusArgs.CoordinatesPrevPageButtonID}_${interaction.id}`, async (event) =>
     {
-      let buttonInteraction = event as ButtonInteraction;
-      if (buttonInteraction.message.interaction.id == interaction.id)
-      {
-        page--;
-        UpdateCoordinates(client, buttonInteraction, page);
-      }
+      page--;
+      UpdateCoordinates(client, event as ButtonInteraction, page);
     });
   }
 }
