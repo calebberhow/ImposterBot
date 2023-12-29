@@ -2,7 +2,6 @@ import CommandHandler from "../commands/Infrastructure/CommandHandler.js";
 import chalk from 'chalk';
 
 import bored from "../commands/bored.js";
-import coinflip from "../commands/coinflip.js";
 import games from "../commands/games.js";
 import help from "../commands/help.js";
 import hideandseek from "../commands/hideandseek.js";
@@ -34,7 +33,6 @@ class CommandRegistry
 
 export default new CommandRegistry(
   bored,
-  coinflip,
   games,
   help,
   hideandseek,

@@ -13,6 +13,7 @@ import roll from '../ApplicationCommands/Definitions/roll.js';
 import blackjack from '../ApplicationCommands/Definitions/blackjack.js';
 import ambushwiki from '../ApplicationCommands/Definitions/ambushwiki.js';
 import ambush from '../ApplicationCommands/Definitions/ambush.js';
+import coinflip from '../ApplicationCommands/Definitions/coinflip.js';
 
 class ApplicationCommandList
 {
@@ -79,5 +80,20 @@ enum PublishType
   PublicOnly,
 }
 
-export default new ApplicationCommandList(MCStatus, MCAdmin, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab, rickroll, roll, blackjack, ambushwiki, ambush);
+export default new ApplicationCommandList(
+  MCStatus,
+  MCAdmin,
+  MCStatus_Rules,
+  MCStatus_NextPage,
+  MCStatus_PrevPage,
+  hug,
+  headpat,
+  slap,
+  stab,
+  rickroll,
+  roll,
+  blackjack,
+  ambushwiki,
+  ambush,
+  coinflip);
 export { ApplicationCommandList, PublishType };

@@ -93,3 +93,4 @@ function moderate(message: Discord.Message, test: boolean = false)
 }
 
 export default { moderate, randMessage, isModerator };
+export { moderate, randMessage, isModerator };

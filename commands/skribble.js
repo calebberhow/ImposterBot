@@ -2,7 +2,6 @@ import { EmbedBuilder } from 'discord.js';
 import { IDs } from '../ids_manager.js';
 import colors from '../util/colors.js';
 import CommandHandler from './Infrastructure/CommandHandler.js';
-import coinflip from './coinflip.js';
 
 async function run(client, message, args)
 {
