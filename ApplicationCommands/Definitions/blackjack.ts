@@ -1,8 +1,9 @@
-import CommandHandler from './Infrastructure/CommandHandler.js';
-import { Client, EmbedBuilder, GuildEmoji, Message } from 'discord.js';
-import ids from '../ids_manager.js';
-import colors from '../util/colors.js';
-import ServiceClient from '../ServiceClient.js';
+// TODO: move chat input toward button responses.
+import { ChatInputCommandInteraction, Client, EmbedBuilder, Guild, GuildEmoji, InteractionResponse, Message, SlashCommandBuilder } from 'discord.js';
+import { IDs } from '../../ids_manager.js';
+import colors from '../../util/colors.js';
+import ServiceClient from '../../ServiceClient.js';
+import ApplicationCommand from '../Infrastructure/ApplicationCommand.js';
 
 // determine valid cards.
 const cards = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
@@ -32,13 +33,13 @@ class Card
 }
 
 // Get top and bottom emojis for input card
-function getEmojis(client: Client, card: Card): string[]
+function getEmojis(client: Client, card: Card): Array<string | GuildEmoji>
 {
-  var topEmoji = client.emojis.cache.get(ids[`_${card.card}${card.color}`]);
-  var bottomEmoji = client.emojis.cache.get(ids[card.suit]);
   try
   {
-    return [topEmoji.toString(), bottomEmoji.toString()];
+    var topEmoji = client.emojis.cache.get(IDs[`_${card.card}${card.color}`]);
+    var bottomEmoji = client.emojis.cache.get(IDs[card.suit]);
+    return [topEmoji, bottomEmoji];
   }
   catch {
     return [`_${card.card}${card.color}`, card.suit];
@@ -96,7 +97,7 @@ function drawDeal(dealercards: Array<Card>)
 }
 
 // Draws card for player. Used in beginning and in hitstay
-async function drawCard(client: Client, message: Message, defaultEmbed: EmbedBuilder, blackjackMessage: Message, end: boolean, playerCards: Array<Card>, dealerCards: Array<Card>) 
+async function drawCard(client: Client, interaction: ChatInputCommandInteraction, defaultEmbed: EmbedBuilder, blackjackMessage: InteractionResponse, end: boolean, playerCards: Array<Card>, dealerCards: Array<Card>) 
 {
   let value = 0, msg = '';
   // Generates random card
@@ -118,17 +119,17 @@ async function drawCard(client: Client, message: Message, defaultEmbed: EmbedBui
     // Loops the awaitMessages until message is 11 or 1.
     while (msg !== '11' && msg !== '1')
     {
-      await message.channel.awaitMessages({ filter: m => m.author.id == message.author.id, max: 1, time: 75000 }).then(collected =>
+      await interaction.channel.awaitMessages({ filter: m => m.author.id == interaction.user.id, max: 1, time: 75000 }).then(collected =>
       {
         msg = collected.first().content;
         // If the message is not 11 or 1, notify user, then continue loop
         if (msg !== '11' && msg !== '1')
         {
-          message.reply('Send `11` or `1` please.');
+          interaction.reply('Send `11` or `1` please.');
         }
       }).catch((err) =>
       {
-        message.channel.send('Something went wrong');
+        interaction.channel.send('Something went wrong');
       });
     }
     // Assign value based on message receieved by user (11 or 1)
@@ -192,11 +193,11 @@ function bottomEmojis(client: Client, cardlist: Array<Card>)
   return bottomlist;
 }
 
-async function run(client: Client, message: Message, args: string[])
+async function execute(client: ServiceClient, interaction: ChatInputCommandInteraction)
 {
   // Initialize variables
   var dealercards: Array<Card> = [], playercards: Array<Card> = [], score: number;
-  var defaultEmbed: EmbedBuilder, blackjackMessage: Message;
+  var defaultEmbed: EmbedBuilder, blackjackMessage: InteractionResponse;
   var end: boolean = false;
 
   // Creating default embed
@@ -204,24 +205,24 @@ async function run(client: Client, message: Message, args: string[])
     .setTitle('Blackjack')
     .setFooter({ text: 'type hit or stay' })
     .setColor(colors.green)
-    .setAuthor({ name: `${message.author.username}'s Game` })
+    .setAuthor({ name: `${interaction.user.username}'s Game` })
     .setThumbnail('https://i.imgur.com/ibt3ETF.png');
 
   // Sends embed, saves as bjEmbed for later editing
-  await message.channel.send({ embeds: [defaultEmbed] }).then(embd =>
+  await interaction.reply({ embeds: [defaultEmbed] }).then(embd =>
   {
     blackjackMessage = embd;
   });
 
   // Gets the player and dealer initial cards.
   drawDeal(dealercards);
-  await drawCard(client, message, defaultEmbed, blackjackMessage, end, playercards, dealercards);
-  await drawCard(client, message, defaultEmbed, blackjackMessage, end, playercards, dealercards);
+  await drawCard(client, interaction, defaultEmbed, blackjackMessage, end, playercards, dealercards);
+  await drawCard(client, interaction, defaultEmbed, blackjackMessage, end, playercards, dealercards);
 
   // Game loop
   while (true)
   {
-    await hitstay(message, blackjackMessage, defaultEmbed);
+    await hitstay(interaction, blackjackMessage, defaultEmbed);
 
     // Calculates player score every loop
     score = 0;
@@ -241,25 +242,25 @@ async function run(client: Client, message: Message, args: string[])
   blackjackMessage.edit({ embeds: [defaultEmbed.setDescription(getDescription(client, playercards, dealercards, true)).setFooter({ text: 'Game End' })] });
 
   // Allows the player to either hit or stay
-  async function hitstay(message: Message, blackjackMessage: Message, defaultEmbed: EmbedBuilder)
+  async function hitstay(interaction: ChatInputCommandInteraction, blackjackMessage: InteractionResponse, defaultEmbed: EmbedBuilder)
   {
     // Inform user what to do
     blackjackMessage.edit({ embeds: [defaultEmbed.setDescription(getDescription(client, playercards, dealercards, end)).setFooter({ text: 'type hit or stay' })] });
 
     // Await response from user
     var msg: string;
-    await message.channel.awaitMessages({ filter: m => m.author.id === message.author.id, max: 1, time: 75000 }).then(collected =>
+    await interaction.channel.awaitMessages({ filter: m => m.author.id === interaction.user.id, max: 1, time: 75000 }).then(collected =>
     {
       msg = collected.first().content;
     }).catch((err) =>
     {
-      message.channel.send('Game closed due to inactivity.');
+      interaction.channel.send('Game closed due to inactivity.');
       end = true;
     });
 
     if (msg === 'hit')
     {
-      await drawCard(client, message, defaultEmbed, blackjackMessage, end, playercards, dealercards);
+      await drawCard(client, interaction, defaultEmbed, blackjackMessage, end, playercards, dealercards);
       end = false;
       blackjackMessage.edit({ embeds: [defaultEmbed.setDescription(getDescription(client, playercards, dealercards, end)).setFooter({ text: 'type hit or stay' })] });
     }
@@ -271,9 +272,8 @@ async function run(client: Client, message: Message, args: string[])
   }
 }
 
-const config = {
-  name: 'blackjack',
-  aliases: ['bj']
-};
+const builder = new SlashCommandBuilder()
+  .setName('blackjack')
+  .setDescription('play a game of blackjack against ImposterBot');
 
-export default new CommandHandler(config.name, config.aliases, run);
+export default new ApplicationCommand(builder, execute);

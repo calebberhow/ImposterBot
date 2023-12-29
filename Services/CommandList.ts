@@ -3,17 +3,14 @@ import chalk from 'chalk';
 
 import ambush from "../commands/ambush.js";
 import ambushwiki from "../commands/ambushwiki.js";
-import blackjack from "../commands/blackjack.js";
 import bored from "../commands/bored.js";
 import coinflip from "../commands/coinflip.js";
 import games from "../commands/games.js";
 import help from "../commands/help.js";
 import hideandseek from "../commands/hideandseek.js";
 import host from "../commands/host.js";
-import leaderboard from "../commands/leaderboard.js";
 import random from "../commands/random.js";
 import skribble from "../commands/skribble.js";
-import unmute from "../commands/unmute.js";
 
 class CommandRegistry 
 {
@@ -40,16 +37,13 @@ class CommandRegistry
 export default new CommandRegistry(
   ambush,
   ambushwiki,
-  blackjack,
   bored,
   coinflip,
   games,
   help,
   hideandseek,
   host,
-  leaderboard,
   random,
-  skribble,
-  unmute);
+  skribble);
 
 export { CommandRegistry };
