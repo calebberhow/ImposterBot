@@ -158,7 +158,7 @@ async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatIn
   await interaction.reply(response);
   if (response.components != null)
   {
-    client.Services.EventAggregator.Subscribe(MCStatusArgs.CoordinatesNextPageButtonID, async (event) =>
+    client.Services.EventAggregator.Subscribe(`${MCStatusArgs.CoordinatesNextPageButtonID}_${interaction.id}`, async (event) =>
     {
       let buttonInteraction = event as ButtonInteraction;
       if (buttonInteraction.message.interaction.id == interaction.id)
@@ -168,7 +168,7 @@ async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatIn
       }
     });
 
-    client.Services.EventAggregator.Subscribe(MCStatusArgs.CoordinatesPrevPageButtonID, async (event) =>
+    client.Services.EventAggregator.Subscribe(`${MCStatusArgs.CoordinatesPrevPageButtonID}_${interaction.id}`, async (event) =>
     {
       let buttonInteraction = event as ButtonInteraction;
       if (buttonInteraction.message.interaction.id == interaction.id)
@@ -265,12 +265,22 @@ async function rulesHandler(client: ServiceClient, interaction: ButtonInteractio
 
 async function nextPage(client: ServiceClient, interaction: ButtonInteraction)
 {
-  client.Services.EventAggregator.Invoke(MCStatusArgs.CoordinatesNextPageButtonID, interaction);
+  const event = `${MCStatusArgs.CoordinatesNextPageButtonID}_${interaction.message.interaction.id}`;
+  client.Services.EventAggregator.Invoke(event, interaction);
+  if (!client.Services.EventAggregator.HasListener(event))
+  {
+    interaction.reply({ content: "This message is stale. Please resend to change page.", ephemeral: true });
+  }
 }
 
 async function prevPage(client: ServiceClient, interaction: ButtonInteraction)
 {
-  client.Services.EventAggregator.Invoke(MCStatusArgs.CoordinatesPrevPageButtonID, interaction);
+  const event = `${MCStatusArgs.CoordinatesPrevPageButtonID}_${interaction.message.interaction.id}`;
+  client.Services.EventAggregator.Invoke(event, interaction);
+  if (!client.Services.EventAggregator.HasListener(event))
+  {
+    interaction.reply({ content: "This message is stale. Please resend to change page.", ephemeral: true });
+  }
 }
 
 function AddCoordinateOptions(cmd: SlashCommandSubcommandBuilder): SlashCommandSubcommandBuilder

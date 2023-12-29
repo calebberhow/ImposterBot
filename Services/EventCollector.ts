@@ -3,10 +3,10 @@ class EventAggregator
 {
   private listeners: Array<ListenerWithUUID> = [];
 
-  Invoke(type: string, value: unknown);
-  Invoke(event: Event);
+  Invoke(type: string, value: unknown): void;
+  Invoke(event: Event): void;
 
-  Invoke(...args: Array<unknown>)
+  Invoke(...args: Array<unknown>): void
   {
     // Handle parsing args due to overloads
     var type: string, value: unknown;
@@ -72,6 +72,19 @@ class EventAggregator
   Unsubcribe(uuid: EventCollectorListenerID)
   {
     this.listeners = this.listeners.filter(x => x.UUID != uuid);
+  }
+
+  HasListener(type: string): boolean
+  {
+    for (const listener of this.listeners)
+    {
+      if (listener.type == type)
+      {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
