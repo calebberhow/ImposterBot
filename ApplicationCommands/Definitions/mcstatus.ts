@@ -1,5 +1,5 @@
 import mc from "minecraftstatuspinger";
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, InteractionReplyOptions, SlashCommandBuilder, SlashCommandSubcommandBuilder, StringSelectMenuBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ChatInputCommandInteraction, EmbedBuilder, Interaction, InteractionReplyOptions, SlashCommandBuilder, SlashCommandSubcommandBuilder } from 'discord.js';
 import colors from "../../util/colors.js";
 import CoordinateStore from "../Infrastructure/CoordinateStore.js";
 import Coordinate from "../Infrastructure/Coordinate.js";
@@ -94,10 +94,10 @@ async function SendServerInfo(interaction: ChatInputCommandInteraction): Promise
   interaction.reply({ embeds: [embed], ephemeral: true, components: [button_row] });
 }
 
-async function GetCoordinatesMessage(client: ServiceClient, page: number): Promise<InteractionReplyOptions>
+async function GetCoordinatesMessage(client: ServiceClient, interaction: Interaction, page: number): Promise<InteractionReplyOptions>
 {
   const max_page_length = 12;
-  var coordinates = await new CoordinateStore(client.Services.Database).GetAll();
+  var coordinates = await new CoordinateStore(client.Services.Database).GetAll(interaction.guildId);
   let max_page = Math.floor(coordinates.length / (max_page_length + 1));
   if (page > max_page)
   {
@@ -154,7 +154,7 @@ async function GetCoordinatesMessage(client: ServiceClient, page: number): Promi
 async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatInputCommandInteraction)
 {
   let page = 0;
-  let response = await GetCoordinatesMessage(client, page);
+  let response = await GetCoordinatesMessage(client, interaction, page);
   await interaction.reply(response);
   if (response.components != null)
   {
@@ -182,19 +182,14 @@ async function SendCoordinatesMessage(client: ServiceClient, interaction: ChatIn
 
 async function UpdateCoordinates(client: ServiceClient, interaction: ButtonInteraction, page: number)
 {
-  let newMessage = await GetCoordinatesMessage(client, page);
+  let newMessage = await GetCoordinatesMessage(client, interaction, page);
   interaction.update({ content: newMessage.content, embeds: newMessage.embeds, components: newMessage.components });
 }
 
 async function AddCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction): Promise<void>
 {
-  var id: string = interaction.options.getString(MCStatusArgs.CoordinateDescription);
-  var x: number = interaction.options.getInteger(MCStatusArgs.CoordinateX);
-  var y: number = interaction.options.getInteger(MCStatusArgs.CoordinateY);
-  var z: number = interaction.options.getInteger(MCStatusArgs.CoordinateZ);
-  var dimension: string = interaction.options.getString(MCStatusArgs.CoordinateDimension);
-
-  let res: boolean = await new CoordinateStore(client.Services.Database).AddCoordinate(new Coordinate(id, x, z, y, dimension));
+  let coordinate = GetCoordinateFromOptions(interaction);
+  let res: boolean = await new CoordinateStore(client.Services.Database).AddCoordinate(coordinate, interaction.guildId);
 
   if (res)
   {
@@ -205,13 +200,13 @@ async function AddCoordinate(client: ServiceClient, interaction: ChatInputComman
         embeds: [new EmbedBuilder()
           .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
           .setTitle(interaction.channel.name)
-          .setDescription(`Added coordinate ${id} (${x}, ${y}, ${z}).`)]
+          .setDescription(`Added coordinate ${coordinate.id} (${coordinate.x}, ${coordinate.y}, ${coordinate.z}).`)]
       });
     }
 
     var embed = new EmbedBuilder()
       .setTitle("Created a coordinate :)")
-      .setDescription(`id: ${id}, x: ${x}, y: ${y}, z: ${z}, dimension: ${dimension}`);
+      .setDescription(`id: ${coordinate.id}, x: ${coordinate.x}, y: ${coordinate.y}, z: ${coordinate.z}, dimension: ${coordinate.dimension}`);
 
     interaction.reply({ embeds: [embed], ephemeral: true });
     return;
@@ -222,13 +217,9 @@ async function AddCoordinate(client: ServiceClient, interaction: ChatInputComman
 
 async function EditCoordinate(client: ServiceClient, interaction: ChatInputCommandInteraction): Promise<void>
 {
-  var id: string = interaction.options.getString(MCStatusArgs.CoordinateDescription);
-  var x: number = interaction.options.getInteger(MCStatusArgs.CoordinateX);
-  var y: number = interaction.options.getInteger(MCStatusArgs.CoordinateY);
-  var z: number = interaction.options.getInteger(MCStatusArgs.CoordinateZ);
-  var dimension: string = interaction.options.getString(MCStatusArgs.CoordinateDimension);
-  let prev: Coordinate = await new CoordinateStore(client.Services.Database).GetCoordinate(id);
-  let res: boolean = await new CoordinateStore(client.Services.Database).ModifyCoordinate(new Coordinate(id, x, z, y, dimension));
+  let coordinate = GetCoordinateFromOptions(interaction);
+  let prev: Coordinate = await new CoordinateStore(client.Services.Database).GetCoordinate(coordinate.id, interaction.guildId);
+  let res: boolean = await new CoordinateStore(client.Services.Database).ModifyCoordinate(coordinate, interaction.guildId);
 
   if (res && prev != null)
   {
@@ -239,19 +230,29 @@ async function EditCoordinate(client: ServiceClient, interaction: ChatInputComma
         embeds: [new EmbedBuilder()
           .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.avatarURL() })
           .setTitle(interaction.channel.name)
-          .setDescription(`Edited coordinate id=${prev.id} (${prev.x}, ${prev.y}, ${prev.z}, dim=${prev.dimension}) => (${x}, ${y}, ${z}, dim=${dimension}).`)]
+          .setDescription(`Edited coordinate id=${prev.id} (${prev.x}, ${prev.y}, ${prev.z}, dim=${prev.dimension}) => (${coordinate.x}, ${coordinate.y}, ${coordinate.z}, dim=${coordinate.dimension}).`)]
       });
     }
 
     var embed = new EmbedBuilder()
       .setTitle("Modified a coordinate :)")
-      .setDescription(`id: ${id}, x: ${x}, y: ${y}, z: ${z}, dimension: ${dimension}`);
+      .setDescription(`id: ${coordinate.id}, x: ${coordinate.x}, y: ${coordinate.y}, z: ${coordinate.z}, dimension: ${coordinate.dimension}`);
 
     interaction.reply({ embeds: [embed], ephemeral: true });
     return;
   }
 
   interaction.reply({ content: "Failed to modify coordinate. This coordinate does not exist.", ephemeral: true });
+}
+
+function GetCoordinateFromOptions(interaction: ChatInputCommandInteraction): Coordinate
+{
+  let id: string = interaction.options.getString(MCStatusArgs.CoordinateDescription);
+  let x: number = interaction.options.getInteger(MCStatusArgs.CoordinateX);
+  let y: number = interaction.options.getInteger(MCStatusArgs.CoordinateY);
+  let z: number = interaction.options.getInteger(MCStatusArgs.CoordinateZ);
+  let dimension: string = interaction.options.getString(MCStatusArgs.CoordinateDimension);
+  return new Coordinate(id, x, z, y, dimension);
 }
 
 async function rulesHandler(client: ServiceClient, interaction: ButtonInteraction)
