@@ -1,8 +1,6 @@
 import CommandHandler from "../commands/Infrastructure/CommandHandler.js";
 import chalk from 'chalk';
 
-import ambush from "../commands/ambush.js";
-import ambushwiki from "../commands/ambushwiki.js";
 import bored from "../commands/bored.js";
 import coinflip from "../commands/coinflip.js";
 import games from "../commands/games.js";
@@ -35,8 +33,6 @@ class CommandRegistry
 }
 
 export default new CommandRegistry(
-  ambush,
-  ambushwiki,
   bored,
   coinflip,
   games,
