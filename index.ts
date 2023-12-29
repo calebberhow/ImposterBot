@@ -19,7 +19,7 @@ const client = new ServiceClient(
 dotenv.config();
 
 // Debug Application Commands (entirely disable global commands, publish server-specific commands)
-client.Services.ApplicationCommands.PublishType = PublishType.PrivateOnly;
+client.Services.ApplicationCommands.PublishType = PublishType.PublicOnly;
 
 // Load the bot's events
 EventLoader(client);
