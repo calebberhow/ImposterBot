@@ -9,6 +9,7 @@ import headpat from '../ApplicationCommands/Definitions/headpat.js';
 import slap from '../ApplicationCommands/Definitions/slap.js';
 import stab from '../ApplicationCommands/Definitions/stab.js';
 import rickroll from '../ApplicationCommands/Definitions/rickroll.js';
+import roll from '../ApplicationCommands/Definitions/roll.js';
 
 class ApplicationCommandList
 {
@@ -75,5 +76,5 @@ enum PublishType
   PublicOnly,
 }
 
-export default new ApplicationCommandList(MCStatus, MCAdmin, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab, rickroll);
+export default new ApplicationCommandList(MCStatus, MCAdmin, MCStatus_Rules, MCStatus_NextPage, MCStatus_PrevPage, hug, headpat, slap, stab, rickroll, roll);
 export { ApplicationCommandList, PublishType };

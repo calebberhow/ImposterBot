@@ -6,17 +6,12 @@ import ambushwiki from "../commands/ambushwiki.js";
 import blackjack from "../commands/blackjack.js";
 import bored from "../commands/bored.js";
 import coinflip from "../commands/coinflip.js";
-import embed from "../commands/embed.js";
-import embedhelp from "../commands/embedhelp.js";
 import games from "../commands/games.js";
 import help from "../commands/help.js";
 import hideandseek from "../commands/hideandseek.js";
 import host from "../commands/host.js";
 import leaderboard from "../commands/leaderboard.js";
-import minecraft from "../commands/minecraft.js";
-import mute from "../commands/mute.js";
 import random from "../commands/random.js";
-import roll from "../commands/roll.js";
 import skribble from "../commands/skribble.js";
 import unmute from "../commands/unmute.js";
 
@@ -48,17 +43,12 @@ export default new CommandRegistry(
   blackjack,
   bored,
   coinflip,
-  embed,
-  embedhelp,
   games,
   help,
   hideandseek,
   host,
   leaderboard,
-  minecraft,
-  mute,
   random,
-  roll,
   skribble,
   unmute);
 

@@ -81,7 +81,8 @@ async function SendServerInfo(interaction: ChatInputCommandInteraction): Promise
 {
   var embed = new EmbedBuilder()
     .setTitle("Cozy Cosmos Minecraft Server")
-    .setColor(colors.purple);
+    .setColor(colors.purple)
+    .setThumbnail('https://i.imgur.com/LmKJGGA.png');
 
   var button_row = new ActionRowBuilder<ButtonBuilder>()
     .addComponents(new ButtonBuilder()
