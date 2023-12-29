@@ -14,6 +14,8 @@ import blackjack from '../ApplicationCommands/Definitions/blackjack.js';
 import ambushwiki from '../ApplicationCommands/Definitions/ambushwiki.js';
 import ambush from '../ApplicationCommands/Definitions/ambush.js';
 import coinflip from '../ApplicationCommands/Definitions/coinflip.js';
+import hideandseek from '../ApplicationCommands/Definitions/hideandseek.js';
+import games from '../ApplicationCommands/Definitions/games.js';
 
 class ApplicationCommandList
 {
@@ -95,5 +97,7 @@ export default new ApplicationCommandList(
   blackjack,
   ambushwiki,
   ambush,
-  coinflip);
+  coinflip,
+  hideandseek,
+  games);
 export { ApplicationCommandList, PublishType };

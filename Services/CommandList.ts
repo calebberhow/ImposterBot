@@ -2,11 +2,8 @@ import CommandHandler from "../commands/Infrastructure/CommandHandler.js";
 import chalk from 'chalk';
 
 import bored from "../commands/bored.js";
-import games from "../commands/games.js";
 import help from "../commands/help.js";
-import hideandseek from "../commands/hideandseek.js";
 import host from "../commands/host.js";
-import random from "../commands/random.js";
 import skribble from "../commands/skribble.js";
 
 class CommandRegistry 
@@ -33,11 +30,8 @@ class CommandRegistry
 
 export default new CommandRegistry(
   bored,
-  games,
   help,
-  hideandseek,
   host,
-  random,
   skribble);
 
 export { CommandRegistry };

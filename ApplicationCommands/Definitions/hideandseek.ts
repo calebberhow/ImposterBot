@@ -1,9 +1,16 @@
-import { EmbedBuilder } from 'discord.js';
-import colors from '../util/colors.js';
-import CommandHandler from './Infrastructure/CommandHandler.js';
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import colors from '../../util/colors.js';
+import ApplicationCommand from '../Infrastructure/ApplicationCommand.js';
+import ServiceClient from '../../ServiceClient.js';
 
-async function run(client, message, args)
+async function run(client: ServiceClient, interaction: ChatInputCommandInteraction)
 {
+  let ephemeral = interaction.options.getBoolean('ephemeral');
+  if (ephemeral == null)
+  {
+    ephemeral = false;
+  }
+
   var embed = new EmbedBuilder()
     .setTitle('For a custom (unofficial) game mode in Among Us that you can host on this server!')
     .setDescription(
@@ -25,12 +32,14 @@ Imposter vision: 0.25x
 Taskbar: Keep viewable so imposter can sabotage comms
 Short tasks: 3 (Recommended)`)
     .setColor(colors.royalblue);
-  message.channel.send({ embeds: [embed] });
+  interaction.reply({ embeds: [embed], ephemeral: ephemeral });
 }
 
-const config = {
-  name: 'hideandseek',
-  aliases: []
-};
+const builder = new SlashCommandBuilder()
+  .setName('hideandseek')
+  .setDescription('gets rules of the unofficial hideandseek Among Us gamemode')
+  .addBooleanOption(opt => opt
+    .setName('ephemeral')
+    .setDescription('sets whether the response should be sent in private to only you'));
 
-export default new CommandHandler(config.name, config.aliases, run);
+export default new ApplicationCommand(builder, run);

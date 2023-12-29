@@ -6,10 +6,17 @@ async function execute(client: ServiceClient, interaction: ChatInputCommandInter
 {
   let sides = interaction.options.getInteger('sides');
   let modifier = interaction.options.getInteger('modifier');
+  let ephemeral = interaction.options.getBoolean('ephemeral');
   if (modifier == null)
   {
     modifier = 0;
   }
+
+  if (ephemeral == null)
+  {
+    ephemeral = false;
+  }
+
   var random = Math.ceil(Math.random() * sides);
   let embd = new EmbedBuilder()
     .setThumbnail(`attachment://d${sides}_${random}.png`)
@@ -21,7 +28,8 @@ async function execute(client: ServiceClient, interaction: ChatInputCommandInter
     files: [{
       attachment: `./assets/d${sides}/d${sides}-${random}.png`,
       name: `d${sides}_${random}.png`
-    }]
+    }],
+    ephemeral: ephemeral
   });
 }
 
@@ -57,6 +65,9 @@ const builder = new SlashCommandBuilder()
   .addIntegerOption(opt => opt
     .setName('modifier')
     .setDescription('adds a modifier to your roll')
-    .setRequired(false));
+    .setRequired(false))
+  .addBooleanOption(opt => opt
+    .setName('ephemeral')
+    .setDescription('sets whether the response should be sent in private to only you'));
 
 export default new ApplicationCommand(builder, execute);
