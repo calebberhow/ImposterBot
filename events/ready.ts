@@ -35,7 +35,7 @@ function getRandomStatus()
       "suspenseful music",
     ["Pokémon: Shiny Hunting", 0.25],
     ["Pokémon GO", 0.25],
-    ]) + " | !commands";
+    ]).toString();
 }
 
 export default new EventHandler(Events.ClientReady, OnReady);
