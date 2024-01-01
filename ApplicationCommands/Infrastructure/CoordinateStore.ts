@@ -14,10 +14,11 @@ class CoordinateStore
   {
     try
     {
-      await this.pgClient.query('INSERT INTO "Minecraft"."Coordinates"(id, x, y, z, dimension) VALUES ($1, $2, $3, $4, $5) WHERE guild_id=$6', [coordinate.id, coordinate.x, coordinate.y, coordinate.z, coordinate.dimension, guild_id]);
+      await this.pgClient.query('INSERT INTO "Minecraft"."Coordinates"(id, guild_id, x, y, z, dimension) VALUES ($1, $2, $3, $4, $5, $6)', [coordinate.id, guild_id, coordinate.x, coordinate.y, coordinate.z, coordinate.dimension]);
     }
     catch (e)
     {
+      console.log(e);
       return false;
     }
 
@@ -47,10 +48,11 @@ class CoordinateStore
   {
     try
     {
-      var query = await this.pgClient.query('SELECT * FROM "Minecraft"."Coordinates" WHERE guild_id=$1 ORDER BY id ASC', [guild_id]);
+      var query = await this.pgClient.query('SELECT id, x, y, z, dimension FROM "Minecraft"."Coordinates" WHERE guild_id=$1 ORDER BY id ASC', [guild_id]);
     }
     catch (e)
     {
+      console.log(e);
       return [];
     }
 

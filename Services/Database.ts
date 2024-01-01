@@ -1,6 +1,6 @@
 import pg from 'pg';
 
-const PostgresClient = new pg.Client({
+const clientPool = new pg.Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'postgres',
@@ -8,6 +8,9 @@ const PostgresClient = new pg.Client({
   port: 5432
 });
 
-PostgresClient.connect();
+clientPool.on('error', (err: Error, _: any) =>
+{
+  console.log(err.message);
+});
 
-export default PostgresClient;
+export default clientPool;

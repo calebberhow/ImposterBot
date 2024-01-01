@@ -16,6 +16,7 @@ import ambush from '../ApplicationCommands/Definitions/ambush.js';
 import coinflip from '../ApplicationCommands/Definitions/coinflip.js';
 import hideandseek from '../ApplicationCommands/Definitions/hideandseek.js';
 import games from '../ApplicationCommands/Definitions/games.js';
+import mariahcarey from '../ApplicationCommands/Definitions/mariahcarey.js';
 
 class ApplicationCommandList
 {
@@ -99,5 +100,6 @@ export default new ApplicationCommandList(
   ambush,
   coinflip,
   hideandseek,
-  games);
+  games,
+  mariahcarey);
 export { ApplicationCommandList, PublishType };
