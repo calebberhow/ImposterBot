@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "ImposterBot",
+  "name": "imposter-bot",
   "version": "1.0.0",
   "description": "Yo!",
   "main": "index.js",
